@@ -6,6 +6,12 @@ class SlidingCarousel extends HTMLElement {
 
   connectedCallback() {
     console.log("connected");
+    this.style.whiteSpace = 'nowrap';
+    this.childNodes.forEach(el=>{
+      if(el.tagName!=='FIGURE') return;
+      console.log(el);
+      el.style.display='inline-block';
+    });
   }
 
   disconnectedCallback() {
@@ -28,6 +34,3 @@ class SlidingCarousel extends HTMLElement {
 }
 
 customElements.define("sliding-carousel", SlidingCarousel);
-
-
-
