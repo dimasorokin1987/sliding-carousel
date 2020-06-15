@@ -1,16 +1,38 @@
 class SlidingCarousel extends HTMLElement {
   constructor() {
     super();
+    // let shadowRoot = this.attachShadow({mode: "open"});
+    // let temp = document.createElement("div");
+    // temp.innerHTML = '<slot></slot>';
+    // shadowRoot.appendChild(temp);
     console.log("created");
   }
 
   connectedCallback() {
     console.log("connected");
     this.style.whiteSpace = 'nowrap';
-    this.childNodes.forEach(el=>{
-      if(el.tagName!=='FIGURE') return;
-      console.log(el);
-      el.style.display='inline-block';
+    this.childNodes.forEach(figure=>{
+      if(figure.tagName!=='FIGURE') return;
+      console.log(figure);
+      Object.assign(figure.style,{
+        position: 'relative',
+        display: 'inline-block',
+        width: this.style.width,
+        height: this.style.height
+      });
+      let img = figure.querySelector('img');
+      Object.assign(img.style,{
+        width:'100%',
+        height: '100%'
+      });
+      let figcaption = figure.querySelector('figcaption')
+      Object.assign(figcaption.style,{
+        position:'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)'
+      });
+      console.dir(figcaption)
     });
   }
 
