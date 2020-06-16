@@ -8,24 +8,27 @@ class SlidingCarousel extends HTMLElement {
     Object.assign(this.container.style,{
       position: 'relative',
       width: this.style.width,
-      height: this.style.height
+      height: '100%'
     });
 
     this.prevButton = document.createElement("button");
     Object.assign(this.prevButton.style,{
       position: 'absolute',
-      zIndex: 1
+      zIndex: 1,
+      height: '93%',
+      opacity: '50%',
+      fontSize: '36px'
     });
-    this.prevButton.innerHTML = 'prev';
+    this.prevButton.innerHTML = '<';
     this.container.appendChild(this.prevButton);
 
     this.slides = document.createElement("div");
     Object.assign(this.slides.style,{
       position: 'absolute',
       whiteSpace: 'nowrap',
-      overflow: 'scroll',
-      width: this.style.width,
-      height: this.style.height
+      overflowX: 'scroll',
+      width: '100%',
+      height: '100%'
     });
     this.slides.innerHTML = '<slot></slot>';
     this.container.appendChild(this.slides);
@@ -34,9 +37,12 @@ class SlidingCarousel extends HTMLElement {
     Object.assign(this.nextButton.style,{
       position: 'absolute',
       right: 0,
-      zIndex: 1
+      zIndex: 1,
+      height: '93%',
+      opacity: '50%',
+      fontSize: '36px'
     });
-    this.nextButton.innerHTML = 'next';
+    this.nextButton.innerHTML = '>';
     this.container.appendChild(this.nextButton);
 
     shadowRoot.appendChild(this.container);
@@ -51,7 +57,7 @@ class SlidingCarousel extends HTMLElement {
         position: 'relative',
         display: 'inline-block',
         width: this.style.width,
-        height: this.container.clientHeight-20+'px',
+        height: '93%',
         padding: 0,
         margin: 0
       });
