@@ -1,6 +1,8 @@
 class SlidingCarousel extends HTMLElement {
   constructor() {
     super();
+    this.positions = [];
+    this.index = 0;
     let shadowRoot = this.attachShadow({mode: "open"});
     this.container = document.createElement("div");
     Object.assign(this.container.style,{
@@ -42,7 +44,6 @@ class SlidingCarousel extends HTMLElement {
   }
 
   connectedCallback() {
-    console.log("connected");
     this.childNodes.forEach(figure=>{
       if(figure.tagName!=='FIGURE') return;
       console.log(figure);
@@ -66,8 +67,21 @@ class SlidingCarousel extends HTMLElement {
         left: '50%',
         transform: 'translate(-50%, -50%)'
       });
+
+      this.positions.push(figure.offsetLeft);
       console.dir(figcaption)
     });
+
+    this.prevButton.onclick = ()=>{
+      this.index = (this.index + this.positions.length - 1)%this.positions.length;
+      this.slides.scrollTo(this.positions[this.index],0)
+    };
+    this.nextButton.onclick = ()=>{
+      this.index = (this.index + 1)%this.positions.length;
+      this.slides.scrollTo(this.positions[this.index],0);
+      
+    };
+    console.log("connected");
   }
 
   disconnectedCallback() {
