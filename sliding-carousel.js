@@ -85,8 +85,10 @@ class SlidingCarousel extends HTMLElement {
     this.nextButton.onclick = ()=>{
       this.index = (this.index + 1)%this.positions.length;
       this.slides.scrollTo(this.positions[this.index],0);
-      
     };
+    this.slides.onscroll = ()=>{
+      console.log(this.slides.scrollLeft);
+    }
     console.log("connected");
   }
 
