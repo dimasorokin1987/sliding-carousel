@@ -1,16 +1,21 @@
 class SlidingCarousel extends HTMLElement {
   constructor() {
     super();
-    // let shadowRoot = this.attachShadow({mode: "open"});
-    // let temp = document.createElement("div");
-    // temp.innerHTML = '<slot></slot>';
-    // shadowRoot.appendChild(temp);
+    let shadowRoot = this.attachShadow({mode: "open"});
+    let container = document.createElement("article");
+    Object.assign(container.style,{
+      whiteSpace: 'nowrap',
+      overflow: 'scroll',
+      width: this.style.width,
+      height: this.style.height
+    });
+    container.innerHTML = '<slot></slot>';
+    shadowRoot.appendChild(container);
     console.log("created");
   }
 
   connectedCallback() {
     console.log("connected");
-    this.style.whiteSpace = 'nowrap';
     this.childNodes.forEach(figure=>{
       if(figure.tagName!=='FIGURE') return;
       console.log(figure);
@@ -56,3 +61,28 @@ class SlidingCarousel extends HTMLElement {
 }
 
 customElements.define("sliding-carousel", SlidingCarousel);
+
+
+
+
+
+document.querySelector('#logo').innerHTML += `
+<sliding-carousel style='width: 300px; height: 300px;'>
+  <figure>
+    <img src="https://picsum.photos/200/300" />
+    <figcaption>random image 1</figcaption>
+  </figure>
+  <figure>
+    <img src="https://picsum.photos/200/300" />
+    <figcaption>random image 2</figcaption>
+  </figure>
+  <figure>
+    <img src="https://picsum.photos/200/300" />
+    <figcaption>random image 3</figcaption>
+  </figure>
+  <figure>
+    <img src="https://picsum.photos/200/300" />
+    <figcaption>random image 4</figcaption>
+  </figure>
+</sliding-carousel>
+`;
