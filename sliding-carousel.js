@@ -2,15 +2,15 @@ class SlidingCarousel extends HTMLElement {
   constructor() {
     super();
     let shadowRoot = this.attachShadow({mode: "open"});
-    let container = document.createElement("article");
-    Object.assign(container.style,{
+    this.container = document.createElement("article");
+    Object.assign(this.container.style,{
       whiteSpace: 'nowrap',
       overflow: 'scroll',
       width: this.style.width,
       height: this.style.height
     });
-    container.innerHTML = '<slot></slot>';
-    shadowRoot.appendChild(container);
+    this.container.innerHTML = '<slot></slot>';
+    shadowRoot.appendChild(this.container);
     console.log("created");
   }
 
@@ -23,7 +23,9 @@ class SlidingCarousel extends HTMLElement {
         position: 'relative',
         display: 'inline-block',
         width: this.style.width,
-        height: this.style.height
+        height: this.container.clientHeight-20+'px',
+        padding: 0,
+        margin: 0
       });
       let img = figure.querySelector('img');
       Object.assign(img.style,{
@@ -86,3 +88,7 @@ document.querySelector('#logo').innerHTML += `
   </figure>
 </sliding-carousel>
 `;
+
+
+container = document.querySelector('sliding-carousel').shadowRoot.querySelector('article')
+container.scrollTo($$('figure')[1].offsetLeft,0)
