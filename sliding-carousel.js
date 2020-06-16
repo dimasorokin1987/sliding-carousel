@@ -2,14 +2,41 @@ class SlidingCarousel extends HTMLElement {
   constructor() {
     super();
     let shadowRoot = this.attachShadow({mode: "open"});
-    this.container = document.createElement("article");
+    this.container = document.createElement("div");
     Object.assign(this.container.style,{
+      position: 'relative',
+      width: this.style.width,
+      height: this.style.height
+    });
+
+    this.prevButton = document.createElement("button");
+    Object.assign(this.prevButton.style,{
+      position: 'absolute',
+      zIndex: 1
+    });
+    this.prevButton.innerHTML = 'prev';
+    this.container.appendChild(this.prevButton);
+
+    this.slides = document.createElement("div");
+    Object.assign(this.slides.style,{
+      position: 'absolute',
       whiteSpace: 'nowrap',
       overflow: 'scroll',
       width: this.style.width,
       height: this.style.height
     });
-    this.container.innerHTML = '<slot></slot>';
+    this.slides.innerHTML = '<slot></slot>';
+    this.container.appendChild(this.slides);
+
+    this.nextButton = document.createElement("button");
+    Object.assign(this.nextButton.style,{
+      position: 'absolute',
+      right: 0,
+      zIndex: 1
+    });
+    this.nextButton.innerHTML = 'next';
+    this.container.appendChild(this.nextButton);
+
     shadowRoot.appendChild(this.container);
     console.log("created");
   }
@@ -90,5 +117,5 @@ document.querySelector('#logo').innerHTML += `
 `;
 
 
-container = document.querySelector('sliding-carousel').shadowRoot.querySelector('article')
+container = document.querySelector('sliding-carousel').shadowRoot.querySelector('div')
 container.scrollTo($$('figure')[1].offsetLeft,0)
