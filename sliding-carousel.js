@@ -9,7 +9,8 @@ class SlidingCarousel extends HTMLElement {
     Object.assign(this.container.style,{
       position: 'relative',
       width: this.style.width,
-      height: '100%'
+      height: '100%',
+      overflow: 'hidden'
     });
 
     this.prevButton = document.createElement("button");
@@ -29,7 +30,8 @@ class SlidingCarousel extends HTMLElement {
       whiteSpace: 'nowrap',
       overflowX: 'scroll',
       width: '100%',
-      height: '100%'
+      height: '100%',
+      paddingBottom: '17px'
     });
     this.slides.innerHTML = '<slot></slot>';
     this.container.appendChild(this.slides);
@@ -96,6 +98,9 @@ class SlidingCarousel extends HTMLElement {
       this.radiosContainer.appendChild(radio);
       this.radios.push(radio);
     });
+    if(this.radios[this.index]){
+      this.radios[this.index].checked=true;
+    }
 
     this.prevButton.onclick = ()=>{
       this.index = (this.index + this.positions.length - 1)%this.positions.length;
