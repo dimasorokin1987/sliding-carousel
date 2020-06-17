@@ -2,6 +2,7 @@ class SlidingCarousel extends HTMLElement {
   constructor() {
     super();
     this.positions = [];
+    this.radios = [];
     this.index = 0;
     let shadowRoot = this.attachShadow({mode: "open"});
     this.container = document.createElement("div");
@@ -45,6 +46,16 @@ class SlidingCarousel extends HTMLElement {
     this.nextButton.innerHTML = '>';
     this.container.appendChild(this.nextButton);
 
+    this.radiosContainer = document.createElement("div");
+    Object.assign(this.radiosContainer.style,{
+      position: 'absolute',
+      bottom: 0,
+      zIndex: 1,
+      width: '100%',
+      textAlign: 'center'
+    });
+    this.container.appendChild(this.radiosContainer);
+
     shadowRoot.appendChild(this.container);
     console.log("created");
   }
@@ -78,14 +89,30 @@ class SlidingCarousel extends HTMLElement {
       console.dir(figcaption)
     });
 
+    this.positions.forEach(()=>{
+      let radio = document.createElement("input");
+      radio.type='radio';
+      radio.name='position';
+      this.radiosContainer.appendChild(radio);
+      this.radios.push(radio);
+    });
+
     this.prevButton.onclick = ()=>{
       this.index = (this.index + this.positions.length - 1)%this.positions.length;
-      this.slides.scrollTo(this.positions[this.index],0)
+      this.slides.scrollTo(this.positions[this.index],0);
+      this.radios[this.index].checked=true;
     };
     this.nextButton.onclick = ()=>{
       this.index = (this.index + 1)%this.positions.length;
       this.slides.scrollTo(this.positions[this.index],0);
+      this.radios[this.index].checked=true;
     };
+    this.radios.forEach((radio,i)=>{
+      radio.onclick = ()=>{
+        this.index = i;
+        this.slides.scrollTo(this.positions[i],0);
+      };
+    });
     this.slides.onscroll = ()=>{
       console.log(this.slides.scrollLeft);
     }
