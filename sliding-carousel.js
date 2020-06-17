@@ -134,8 +134,6 @@ class SlidingCarousel extends HTMLElement {
   adoptedCallback() {
 
   }
-
-
 }
 
 customElements.define("sliding-carousel", SlidingCarousel);
@@ -143,7 +141,7 @@ customElements.define("sliding-carousel", SlidingCarousel);
 
 
 
-
+/*
 document.querySelector('#logo').innerHTML += `
 <sliding-carousel style='width: 300px; height: 300px;'>
   <figure>
@@ -168,3 +166,4 @@ document.querySelector('#logo').innerHTML += `
 
 container = document.querySelector('sliding-carousel').shadowRoot.querySelector('div')
 container.scrollTo($$('figure')[1].offsetLeft,0)
+*/
