@@ -119,7 +119,19 @@ class SlidingCarousel extends HTMLElement {
       };
     });
     this.slides.onscroll = ()=>{
-      console.log(this.slides.scrollLeft);
+      let currentPosition = this.slides.scrollLeft;
+      console.log('currentPosition',currentPosition);
+      let nearestIndex = 0;
+      let minDistance = Infinity;
+      this.positions.forEach((pos,i)=>{
+        let dist = Math.abs(pos-currentPosition);
+        if(dist<minDistance){
+          minDistance = dist;
+          nearestIndex = i;
+        }
+      });
+      this.index = nearestIndex;
+      this.radios[this.index].checked=true;
     }
     console.log("connected");
   }
