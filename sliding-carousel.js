@@ -63,21 +63,21 @@ class SlidingCarousel extends HTMLElement {
   }
 
   connectedCallback() {
-    if(!this.hasAttribute('n_display_splides')){
-      this.setAttribute('n_display_splides',1);
+    if(!this.hasAttribute('n_display_slides')){
+      this.setAttribute('n_display_slides',1);
     }
-    console.log(this.getAttribute('n_display_splides'));
+    console.log(this.getAttribute('n_display_slides'));
 
     this.childNodes.forEach(figure=>{
       if(figure.tagName!=='FIGURE') return;
       console.log(figure);
-      let nDisplaySplides = this.getAttribute('n_display_splides');
-      nDisplaySplides = Number(nDisplaySplides);
-      console.log(nDisplaySplides)
+      let nDisplaySlides = this.getAttribute('n_display_slides');
+      nDisplaySlides = Number(nDisplaySlides);
+      console.log(nDisplaySlides)
       Object.assign(figure.style,{
         position: 'relative',
         display: 'inline-block',
-        width: `${100/nDisplaySplides}%`,
+        width: `${100/nDisplaySlides}%`,
         height: '93%',
         padding: 0,
         margin: 0
@@ -207,11 +207,11 @@ class SlidingCarousel extends HTMLElement {
   }
 
   get nDisplaySlides() {
-    return this.getAttribute('n_display_splides');
+    return this.getAttribute('n_display_slides');
   }
 
   set nDisplaySlides(newValue) {
-    this.setAttribute('n_display_splides', newValue);
+    this.setAttribute('n_display_slides', newValue);
   }
 
   adoptedCallback() {
@@ -226,7 +226,7 @@ customElements.define("sliding-carousel", SlidingCarousel);
 
 
 document.querySelector('#logo').innerHTML += `
-<sliding-carousel style='width: 300px; height: 300px;' n_display_splides=2>
+<sliding-carousel style='width: 300px; height: 300px;' n_display_slides=2>
   <figure>
     <img src="https://picsum.photos/200/300" />
     <figcaption>random image 1</figcaption>
