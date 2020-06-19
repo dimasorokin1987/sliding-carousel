@@ -63,15 +63,15 @@ class SlidingCarousel extends HTMLElement {
   }
 
   connectedCallback() {
-    if(!this.hasAttribute('n-display-splides')){
-      this.setAttribute('n-display-splides',1);
+    if(!this.hasAttribute('n_display_splides')){
+      this.setAttribute('n_display_splides',1);
     }
-    console.log(this.getAttribute('n-display-splides'));
+    console.log(this.getAttribute('n_display_splides'));
 
     this.childNodes.forEach(figure=>{
       if(figure.tagName!=='FIGURE') return;
       console.log(figure);
-      let nDisplaySplides = this.getAttribute('n-display-splides');
+      let nDisplaySplides = this.getAttribute('n_display_splides');
       nDisplaySplides = Number(nDisplaySplides);
       console.log(nDisplaySplides)
       Object.assign(figure.style,{
@@ -189,14 +189,16 @@ class SlidingCarousel extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['n-display-slides'];
+    return ['n_display_slides','test'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     console.log(name, oldValue, newValue);
     switch(name) {
-      case 'n-display-slides':
+      case 'n_display_slides':
+        console.log(111)
         this.childNodes.forEach(figure=>{
+          console.log(figure)
           if(figure.tagName!=='FIGURE') return;
           figure.style.width=`${100/newValue}%`;
         });
@@ -205,11 +207,11 @@ class SlidingCarousel extends HTMLElement {
   }
 
   get nDisplaySlides() {
-    return this.getAttribute('n-display-slides');
+    return this.getAttribute('n_display_splides');
   }
 
   set nDisplaySlides(newValue) {
-    this.setAttribute('n-display-slides', newValue);
+    this.setAttribute('n_display_splides', newValue);
   }
 
   adoptedCallback() {
@@ -220,11 +222,11 @@ class SlidingCarousel extends HTMLElement {
 customElements.define("sliding-carousel", SlidingCarousel);
 
 
-
+/*
 
 
 document.querySelector('#logo').innerHTML += `
-<sliding-carousel style='width: 300px; height: 300px;' n-display-splides='2'>
+<sliding-carousel style='width: 300px; height: 300px;' n_display_splides=2>
   <figure>
     <img src="https://picsum.photos/200/300" />
     <figcaption>random image 1</figcaption>
@@ -245,5 +247,7 @@ document.querySelector('#logo').innerHTML += `
 `;
 
 
-container = document.querySelector('sliding-carousel').shadowRoot.querySelector('div')
-container.scrollTo($$('figure')[1].offsetLeft,0)
+//container = document.querySelector('sliding-carousel').shadowRoot.querySelector('div')
+//container.scrollTo($$('figure')[1].offsetLeft,0)
+document.querySelector('sliding-carousel').setAttribute('n_display_slides',3)
+*/
