@@ -62,6 +62,79 @@ class SlidingCarousel extends HTMLElement {
     console.log("created");
   }
 
+  appendHandlers(){
+    this.prevButton.onclick = ()=>{
+      this.index = (this.index + this.positions.length - 1)%this.positions.length;
+      this.slides.scrollTo(this.positions[this.index],0);
+      this.radios[this.index].checked=true;
+    };
+    this.nextButton.onclick = ()=>{
+      this.index = (this.index + 1)%this.positions.length;
+      this.slides.scrollTo(this.positions[this.index],0);
+      this.radios[this.index].checked=true;
+    };
+    this.radios.forEach((radio,i)=>{
+      radio.onclick = ()=>{
+        this.index = i;
+        this.slides.scrollTo(this.positions[i],0);
+      };
+    });
+    this.slides.onscroll = ()=>{
+      console.log('scroll');
+      let currentPosition = this.slides.scrollLeft;
+      let currentTime = Date.now();
+     // console.log('currentPosition',currentPosition);
+     // console.log('currentTime',currentTime);
+      if(this.hasPrev&&!this.hasNextPosition){
+        let dx = currentPosition-this.prevX;
+        let dt = currentTime - this.prevTime;
+        this.vx = dx/dt;
+        this.hasNextPosition = true;
+      }
+      
+      let nearestIndex = 0;
+      let minDistance = Infinity;
+      this.positions.forEach((pos,i)=>{
+        let dist = Math.abs(pos-currentPosition);
+        if(dist<minDistance){
+          minDistance = dist;
+          nearestIndex = i;
+        }
+      });
+      this.index = nearestIndex;
+      this.radios[this.index].checked=true;
+
+      this.prevX = currentPosition;
+      this.prevTime = currentTime;
+      this.hasPrev = true;
+    }
+    clearInterval(this.interval);
+    this.interval = setInterval(()=>{
+      if(this.hasNextPosition){
+        let currentPosition = this.slides.scrollLeft;
+        let indexRight = this.positions.findIndex(x=>x>currentPosition);
+        let indexLeft = indexRight - 1;
+        let indexNext = this.vx<0?indexLeft: this.vx>0?indexRight: this.index;
+        let nextPosition = this.positions[indexNext];
+        let d = nextPosition - currentPosition;
+        //console.log('inter',d)
+        let ax = Math.abs(1/d*100*10);
+        ax = Math.min(ax, 0.02);
+        this.vx += Math.sign(d)*ax;
+        this.vx = Math.min(this.vx, 0.15);
+        console.log(this.vx);
+        
+        if(Math.abs(d)>100) this.slides.scrollLeft+=this.vx*100;
+        else if(Math.abs(d)>5) this.slides.scrollLeft+=0.3*d;
+        else {
+          this.slides.scrollLeft = nextPosition;
+          this.hasPrev = false;
+          this.hasNextPosition = false;
+        }
+      }
+    }, 100);
+  }
+
   connectedCallback() {
     if(!this.hasAttribute('n_display_slides')){
       this.setAttribute('n_display_slides',1);
@@ -98,7 +171,7 @@ class SlidingCarousel extends HTMLElement {
       this.positions.push(figure.offsetLeft);
       console.dir(figcaption)
     });
-
+    this.positions.splice(1-this.nDisplaySlides);
     this.positions.forEach(()=>{
       let radio = document.createElement("input");
       radio.type='radio';
@@ -109,78 +182,8 @@ class SlidingCarousel extends HTMLElement {
     if(this.radios[this.index]){
       this.radios[this.index].checked=true;
     }
-
-    this.prevButton.onclick = ()=>{
-      this.index = (this.index + this.positions.length - 1)%this.positions.length;
-      this.slides.scrollTo(this.positions[this.index],0);
-      this.radios[this.index].checked=true;
-    };
-    this.nextButton.onclick = ()=>{
-      this.index = (this.index + 1)%this.positions.length;
-      this.slides.scrollTo(this.positions[this.index],0);
-      this.radios[this.index].checked=true;
-    };
-    this.radios.forEach((radio,i)=>{
-      radio.onclick = ()=>{
-        this.index = i;
-        this.slides.scrollTo(this.positions[i],0);
-      };
-    });
-    this.slides.onscroll = ()=>{
-      console.log('scroll');
-      let currentPosition = this.slides.scrollLeft;
-      let currentTime = Date.now();
-     // console.log('currentPosition',currentPosition);
-     // console.log('currentTime',currentTime);
-      if(this.hasPrev&&!this.hasNextPosition){
-        let dx = currentPosition-this.prevX;
-        let dt = currentTime - this.prevTime;
-        this.vx = dx/dt;
-        this.hasNextPosition = true;
-      }
-      
-
-
-      let nearestIndex = 0;
-      let minDistance = Infinity;
-      this.positions.forEach((pos,i)=>{
-        let dist = Math.abs(pos-currentPosition);
-        if(dist<minDistance){
-          minDistance = dist;
-          nearestIndex = i;
-        }
-      });
-      this.index = nearestIndex;
-      this.radios[this.index].checked=true;
-
-      this.prevX = currentPosition;
-      this.prevTime = currentTime;
-      this.hasPrev = true;
-    }
-    this.interval = setInterval(()=>{
-      if(this.hasNextPosition){
-        let currentPosition = this.slides.scrollLeft;
-        let indexRight = this.positions.findIndex(x=>x>currentPosition);
-        let indexLeft = indexRight - 1;
-        let indexNext = this.vx<0?indexLeft: this.vx>0?indexRight: this.index;
-        let nextPosition = this.positions[indexNext];
-        let d = nextPosition - currentPosition;
-        //console.log('inter',d)
-        let ax = Math.abs(1/d*100*10);
-        ax = Math.min(ax, 0.02);
-        this.vx += Math.sign(d)*ax;
-        this.vx = Math.min(this.vx, 0.15);
-        console.log(this.vx);
-        
-        if(Math.abs(d)>100) this.slides.scrollLeft+=this.vx*100;
-        else if(Math.abs(d)>5) this.slides.scrollLeft+=0.3*d;
-        else {
-          this.slides.scrollLeft = nextPosition;
-          this.hasPrev = false;
-          this.hasNextPosition = false;
-        }
-      }
-    }, 100);
+    this.appendHandlers();
+    this.isReady = true;
     console.log('connected');
   }
 
@@ -194,14 +197,34 @@ class SlidingCarousel extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     console.log(name, oldValue, newValue);
+    if(!this.isReady)return;
     switch(name) {
       case 'n_display_slides':
-        console.log(111)
+        this.positions = [];
+        this.radiosContainer.innerHTML = '';
+        this.radios = [];
+
         this.childNodes.forEach(figure=>{
           console.log(figure)
           if(figure.tagName!=='FIGURE') return;
           figure.style.width=`${100/newValue}%`;
+          this.positions.push(figure.offsetLeft);
         });
+        if(this.nDisplaySlides>1){
+          this.positions.splice(1-this.nDisplaySlides);
+        }
+        this.positions.forEach(()=>{
+          let radio = document.createElement("input");
+          radio.type='radio';
+          radio.name='position';
+          this.radiosContainer.appendChild(radio);
+          this.radios.push(radio);
+        });
+        if(this.radios[this.index]){
+          this.radios[this.index].checked=true;
+        }
+        console.log(this.positions)
+        this.appendHandlers();
       break;
     }
   }
@@ -222,11 +245,11 @@ class SlidingCarousel extends HTMLElement {
 customElements.define("sliding-carousel", SlidingCarousel);
 
 
+
 /*
 
-
 document.querySelector('#logo').innerHTML += `
-<sliding-carousel style='width: 300px; height: 300px;' n_display_slides=2>
+<sliding-carousel style='width: 700px; height: 300px;' n_display_slides=2>
   <figure>
     <img src="https://picsum.photos/200/300" />
     <figcaption>random image 1</figcaption>
@@ -249,5 +272,5 @@ document.querySelector('#logo').innerHTML += `
 
 //container = document.querySelector('sliding-carousel').shadowRoot.querySelector('div')
 //container.scrollTo($$('figure')[1].offsetLeft,0)
-document.querySelector('sliding-carousel').setAttribute('n_display_slides',3)
+//document.querySelector('sliding-carousel').setAttribute('n_display_slides',3)
 */
