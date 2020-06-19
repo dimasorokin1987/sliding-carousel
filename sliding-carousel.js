@@ -127,18 +127,8 @@ class SlidingCarousel extends HTMLElement {
       if(this.hasPrev&&!this.hasNextPosition){
         let dx = currentPosition-this.prevX;
         let dt = currentTime - this.prevTime;
-
-        let indexRight = this.positions.findIndex(x=>x>currentPosition);
-        let indexLeft = indexRight - 1;
-        let indexNext = dx<-1?indexLeft: dx>1?indexRight: this.index;
-
-        this.nextPosition = this.positions[indexNext];
-  
-        let d0 = this.nextPosition - currentPosition;
-        //console.log(dx,dt,this.nextPosition)
-        this.vx0d0 = dx/dt/d0;
+        this.vx = dx/dt;
         this.hasNextPosition = true;
-        console.log(this.vx0d0,)
       }
       
 
@@ -162,12 +152,22 @@ class SlidingCarousel extends HTMLElement {
     this.interval = setInterval(()=>{
       if(this.hasNextPosition){
         let currentPosition = this.slides.scrollLeft;
-        let d = this.nextPosition - currentPosition;
-        console.log('inter',d)
+        let indexRight = this.positions.findIndex(x=>x>currentPosition);
+        let indexLeft = indexRight - 1;
+        let indexNext = this.vx<0?indexLeft: this.vx>0?indexRight: this.index;
+        let nextPosition = this.positions[indexNext];
+        let d = nextPosition - currentPosition;
+        //console.log('inter',d)
+        let ax = Math.abs(1/d*100*10);
+        ax = Math.min(ax, 0.02);
+        this.vx += Math.sign(d)*ax;
+        this.vx = Math.min(this.vx, 0.15);
+        console.log(this.vx);
         
-        if(Math.abs(d)>15) this.slides.scrollLeft+=this.vx0d0*100*d;
+        if(Math.abs(d)>100) this.slides.scrollLeft+=this.vx*100;
+        else if(Math.abs(d)>5) this.slides.scrollLeft+=0.3*d;
         else {
-          this.slides.scrollLeft = this.nextPosition;
+          this.slides.scrollLeft = nextPosition;
           this.hasPrev = false;
           this.hasNextPosition = false;
         }
@@ -198,7 +198,7 @@ customElements.define("sliding-carousel", SlidingCarousel);
 
 
 
-
+/*
 document.querySelector('#logo').innerHTML += `
 <sliding-carousel style='width: 300px; height: 300px;'>
   <figure>
@@ -223,3 +223,4 @@ document.querySelector('#logo').innerHTML += `
 
 container = document.querySelector('sliding-carousel').shadowRoot.querySelector('div')
 container.scrollTo($$('figure')[1].offsetLeft,0)
+*/
