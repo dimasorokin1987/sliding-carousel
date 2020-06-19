@@ -63,13 +63,21 @@ class SlidingCarousel extends HTMLElement {
   }
 
   connectedCallback() {
+    if(!this.hasAttribute('n-display-splides')){
+      this.setAttribute('n-display-splides',1);
+    }
+    console.log(this.getAttribute('n-display-splides'));
+
     this.childNodes.forEach(figure=>{
       if(figure.tagName!=='FIGURE') return;
       console.log(figure);
+      let nDisplaySplides = this.getAttribute('n-display-splides');
+      nDisplaySplides = Number(nDisplaySplides);
+      console.log(nDisplaySplides)
       Object.assign(figure.style,{
         position: 'relative',
         display: 'inline-block',
-        width: this.style.width,
+        width: `${100/nDisplaySplides}%`,
         height: '93%',
         padding: 0,
         margin: 0
@@ -173,19 +181,35 @@ class SlidingCarousel extends HTMLElement {
         }
       }
     }, 100);
-    console.log("connected");
+    console.log('connected');
   }
 
   disconnectedCallback() {
-    console.log("disconnected");
+    console.log('disconnected');
   }
 
   static get observedAttributes() {
-    return [];
+    return ['n-display-slides'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     console.log(name, oldValue, newValue);
+    switch(name) {
+      case 'n-display-slides':
+        this.childNodes.forEach(figure=>{
+          if(figure.tagName!=='FIGURE') return;
+          figure.style.width=`${100/newValue}%`;
+        });
+      break;
+    }
+  }
+
+  get nDisplaySlides() {
+    return this.getAttribute('n-display-slides');
+  }
+
+  set nDisplaySlides(newValue) {
+    this.setAttribute('n-display-slides', newValue);
   }
 
   adoptedCallback() {
@@ -198,9 +222,9 @@ customElements.define("sliding-carousel", SlidingCarousel);
 
 
 
-/*
+
 document.querySelector('#logo').innerHTML += `
-<sliding-carousel style='width: 300px; height: 300px;'>
+<sliding-carousel style='width: 300px; height: 300px;' n-display-splides='2'>
   <figure>
     <img src="https://picsum.photos/200/300" />
     <figcaption>random image 1</figcaption>
@@ -223,4 +247,3 @@ document.querySelector('#logo').innerHTML += `
 
 container = document.querySelector('sliding-carousel').shadowRoot.querySelector('div')
 container.scrollTo($$('figure')[1].offsetLeft,0)
-*/
