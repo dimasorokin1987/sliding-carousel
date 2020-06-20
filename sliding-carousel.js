@@ -65,51 +65,93 @@ class SlidingCarousel extends HTMLElement {
     console.log("created");
   }
 
+  scrollToIndex(nextIndex){
+    this.slides.scrollTo(this.positions[nextIndex],0);
+    this.radios[nextIndex].checked=true;
+    this.index = nextIndex;
+  };
+
+  smoothScrollToIndex(nextIndex){
+    this.children[nextIndex].scrollIntoView({
+      behavior: 'smooth', block: 'nearest', inline: 'start'
+    });
+    this.radios[nextIndex].checked=true;
+    this.index = nextIndex;
+  };
+
+  get prevIndex(){
+    if(this.loopSlides) return (this.index + this.positions.length - 1)%this.positions.length;
+    else return Math.max(this.index - 1, 0);
+  };
+
+  get nextIndex(){
+    if(this.loopSlides) return (this.index + 1)%this.positions.length;
+    else return Math.min(this.index + 1, this.positions.length - 1);
+  };
+
   appendHandlers(){
     this.prevButton.onclick = ()=>{
-      this.index = (this.index + this.positions.length - 1)%this.positions.length;
-      this.slides.scrollTo(this.positions[this.index],0);
-      this.radios[this.index].checked=true;
+      if(this.smoothScroll) this.smoothScrollToIndex(this.prevIndex);
+      else this.scrollToIndex(this.prevIndex);
     };
     this.nextButton.onclick = ()=>{
-      this.index = (this.index + 1)%this.positions.length;
-      this.slides.scrollTo(this.positions[this.index],0);
-      this.radios[this.index].checked=true;
+      if(this.smoothScroll) this.smoothScrollToIndex(this.nextIndex);
+      else this.scrollToIndex(this.nextIndex);
     };
     this.radios.forEach((radio,i)=>{
       radio.onclick = ()=>{
-        this.index = i;
-        this.slides.scrollTo(this.positions[i],0);
+        if(this.smoothScroll) this.smoothScrollToIndex(i);
+        else this.scrollToIndex(i);
       };
     });
-    this.slides.onscroll = ()=>{
-      console.log('scroll');
-      let currentPosition = this.slides.scrollLeft;
-      let currentTime = Date.now();
-     // console.log('currentPosition',currentPosition);
-     // console.log('currentTime',currentTime);
-      if(this.hasPrev&&!this.hasNextPosition){
-        let dx = currentPosition-this.prevX;
-        let dt = currentTime - this.prevTime;
-        this.vx = dx/dt;
-        this.hasNextPosition = true;
-      }
-      
-      let nearestIndex = 0;
-      let minDistance = Infinity;
-      this.positions.forEach((pos,i)=>{
-        let dist = Math.abs(pos-currentPosition);
-        if(dist<minDistance){
-          minDistance = dist;
-          nearestIndex = i;
-        }
-      });
-      this.index = nearestIndex;
-      this.radios[this.index].checked=true;
+    this.slides.onmousewheel = e => { 
+      this.userScroll = true; 
+    };
+    this.slides.onscroll = e => {
+      if(!this.userScroll) return;
+      this.userScroll = false;
 
-      this.prevX = currentPosition;
-      this.prevTime = currentTime;
-      this.hasPrev = true;
+      //console.log('user scroll');
+      if(this.smoothScroll){
+        let currentPosition = this.slides.scrollLeft;
+        let currentTime = Date.now();
+       // console.log('currentPosition',currentPosition);
+       // console.log('currentTime',currentTime);
+        if(this.hasPrev&&!this.hasNextPosition){
+          let dx = currentPosition-this.prevX;
+          let dt = currentTime - this.prevTime;
+          this.vx = dx/dt;
+          this.hasNextPosition = true;
+        }
+        
+        let nearestIndex = 0;
+        let minDistance = Infinity;
+        this.positions.forEach((pos,i)=>{
+          let dist = Math.abs(pos-currentPosition);
+          if(dist<minDistance){
+            minDistance = dist;
+            nearestIndex = i;
+          }
+        });
+        this.index = nearestIndex;
+        this.radios[this.index].checked=true;
+  
+        this.prevX = currentPosition;
+        this.prevTime = currentTime;
+        this.hasPrev = true;
+      }else{
+        let currentScrollTime = Date.now();
+        let isScrollingTimeout = this.prevUserScrollTime && currentScrollTime<this.prevUserScrollTime+100;
+        this.prevUserScrollTime = currentScrollTime;
+        if(isScrollingTimeout) {
+          this.slides.scrollLeft = this.positions[this.index];
+        }else{
+          let currentPosition = this.slides.scrollLeft;
+          let prevPosition = this.positions[this.index];
+          if(currentPosition<prevPosition) this.scrollToIndex(this.prevIndex);
+          else if(currentPosition>prevPosition) this.scrollToIndex(this.nextIndex);
+        }
+      }
     }
     clearInterval(this.interval);
     this.interval = setInterval(()=>{
@@ -194,7 +236,11 @@ class SlidingCarousel extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['n_display_slides','hide_prev_button','hide_next_button','hide_radios','width','height'];
+    return [
+      'width','height','n_display_slides',
+      'hide_prev_button','hide_next_button','hide_radios',
+      'smooth_scroll','loop_slides'
+    ];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -252,6 +298,8 @@ class SlidingCarousel extends HTMLElement {
       break;
       default:
         throw 'attempt to change unknown attribute';
+      case 'smooth_scroll':
+      case 'loop_slides':
     }
   }
 
@@ -300,6 +348,24 @@ class SlidingCarousel extends HTMLElement {
     this.setAttribute('height', newValue);
   }
 
+  get smoothScroll() {
+    let smooth = this.hasAttribute('smooth_scroll')
+    &&this.getAttribute('smooth_scroll')!=='false';
+    return smooth;
+  }
+  set smoothScroll(newValue) {
+    this.setAttribute('smooth_scroll', newValue);
+  }
+
+  get loopSlides() {
+    let loop = this.hasAttribute('loop_slides')
+    &&this.getAttribute('loop_slides')!=='false';
+    return loop;
+  }
+  set loopSlides(newValue) {
+    this.setAttribute('loop_slides', newValue);
+  }
+
   adoptedCallback() {
 
   }
@@ -338,6 +404,8 @@ document.querySelector('#logo').innerHTML += `
 //document.querySelector('sliding-carousel').setAttribute('n_display_slides',3)
 document.querySelector('sliding-carousel').setAttribute('hide_prev_button','')
 //document.querySelector('sliding-carousel').setAttribute('hide_radios','true')
-document.querySelector('sliding-carousel').setAttribute('height','')
+document.querySelector('sliding-carousel').setAttribute('height','100px')
+document.querySelector('sliding-carousel').setAttribute('smooth_scroll','true')
+//document.querySelector('sliding-carousel').setAttribute('loop_slides','true')
 
 */
