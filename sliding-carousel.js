@@ -302,6 +302,16 @@ class SlidingCarousel extends HTMLElement {
       break;
       case 'width':
         this.container.style.width = newValue;
+        this.positions = [];
+
+        Array.from(this.children).forEach(slide=>{
+          console.log(slide)
+          //slide.style.width=`${100/newValue}%`;
+          this.positions.push(slide.offsetLeft);
+        });
+        if(this.nDisplaySlides>1){
+          this.positions.splice(1-this.nDisplaySlides);
+        }
       break;
       case 'height':
         this.container.style.height = newValue;
