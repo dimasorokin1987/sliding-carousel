@@ -99,7 +99,7 @@ class SlidingCarousel extends HTMLElement {
         minDistance = dist;
         nearestIndex = i;
       }
-      console.log(currentPosition,pos,dist,i)
+      //console.log(currentPosition,pos,dist,i)
     });
     this.index = nearestIndex;
     this.radios[this.index].checked=true;
@@ -127,7 +127,7 @@ class SlidingCarousel extends HTMLElement {
     this.slides.onscroll = e => {
       if(!this.userScroll) return;
       this.userScroll = false;
-      console.log('user scroll',e);
+      //console.log('user scroll',e);
 
       if(this.smoothScroll){
         let currentPosition = this.slides.scrollLeft;
@@ -165,13 +165,16 @@ class SlidingCarousel extends HTMLElement {
         this.updateIndexFromPosition();
         let currentPosition = this.slides.scrollLeft;
         let indexRight = this.positions.findIndex(x=>x>currentPosition);
+        if(indexRight===-1)indexRight = this.positions.length - 1;
+
         let indexLeft = indexRight - 1;
         let indexNext = this.vx<0?indexLeft: this.vx>0?indexRight: this.index;
         let nextPosition = this.positions[indexNext];
         let d = nextPosition - currentPosition;
-        //console.log('inter',d)
+        console.log('inter',indexRight,currentPosition,this.positions)
         let ax = Math.abs(1/d*100*10);
         ax = Math.min(ax, 0.02);
+       // console.log(ax);
         this.vx += Math.sign(d)*ax;
         this.vx = Math.min(this.vx, 0.15);
         console.log(this.vx);
@@ -381,7 +384,7 @@ class SlidingCarousel extends HTMLElement {
 customElements.define("sliding-carousel", SlidingCarousel);
 
 
-
+/*
 
 
 document.querySelector('#logo').innerHTML += `
@@ -415,3 +418,4 @@ document.querySelector('sliding-carousel').setAttribute('height','100px')
 document.querySelector('sliding-carousel').setAttribute('smooth_scroll','true')
 //document.querySelector('sliding-carousel').setAttribute('loop_slides','true')
 
+*/
