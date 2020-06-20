@@ -4,6 +4,7 @@ class SlidingCarousel extends HTMLElement {
     this.positions = [];
     this.radios = [];
     this.index = 0;
+    this.shift = 0;
     let shadowRoot = this.attachShadow({mode: "open"});
     this.container = document.createElement("div");
     Object.assign(this.container.style,{
@@ -72,10 +73,38 @@ class SlidingCarousel extends HTMLElement {
   };
 
   smoothScrollToIndex(nextIndex){
+    let n = this.children.length;
+    let m = n - this.nDisplaySlides + 1;
+    console.log(this.index,nextIndex,n-1,this.index===n-1 && nextIndex===0)
+    if(this.index===0 && nextIndex===n-1){
+      if(this.loopSlides){
+        this.slides.scrollTo(this.positions[1],0)
+        this.insertBefore(this.children[n-1], this.children[0]); 
+        this.shift = (this.shift+1)%n;
+        nextIndex = 0;
+      }
+    }
+    console.log(n-this.nDisplaySlides<this.index && this.index<n,nextIndex===(this.index+1)%n,nextIndex,this.index,n)
+    if(true
+      && n-this.nDisplaySlides<=this.index && this.index<n
+      && nextIndex===(this.index+1)%n
+    ){
+      //2->3,3->0
+      console.log(111)
+      if(this.loopSlides){
+        this.appendChild(this.children[0]);
+        this.slides.scrollTo(this.positions[m-2],0)  
+        this.shift = (this.shift+n-1)%n;
+        nextIndex = m-1;
+      }
+    }
+
     this.children[nextIndex].scrollIntoView({
       behavior: 'smooth', block: 'nearest', inline: 'start'
     });
-    this.radios[nextIndex].checked=true;
+    let origIndex = (nextIndex-this.shift+n)%n;
+    console.log(origIndex,nextIndex,this.shift,n)
+    this.radios[origIndex].checked=true;
     this.index = nextIndex;
   };
 
@@ -225,7 +254,9 @@ class SlidingCarousel extends HTMLElement {
       this.positions.push(slide.offsetLeft);
       console.dir(figcaption)
     });
-    this.positions.splice(1-this.nDisplaySlides);
+    if(!this.loopSlides){
+      this.positions.splice(1-this.nDisplaySlides);
+    }
     this.positions.forEach(()=>{
       let radio = document.createElement("input");
       radio.type='radio';
@@ -268,7 +299,9 @@ class SlidingCarousel extends HTMLElement {
           this.positions.push(slide.offsetLeft);
         });
         if(this.nDisplaySlides>1){
-          this.positions.splice(1-this.nDisplaySlides);
+          if(!this.loopSlides){
+            this.positions.splice(1-this.nDisplaySlides);
+          }
         }
         this.positions.forEach(()=>{
           let radio = document.createElement("input");
@@ -305,12 +338,37 @@ class SlidingCarousel extends HTMLElement {
         this.positions = [];
 
         Array.from(this.children).forEach(slide=>{
-          console.log(slide)
-          //slide.style.width=`${100/newValue}%`;
           this.positions.push(slide.offsetLeft);
         });
         if(this.nDisplaySlides>1){
-          this.positions.splice(1-this.nDisplaySlides);
+          if(!this.loopSlides){
+            this.positions.splice(1-this.nDisplaySlides);
+          }
+        }
+      break;
+      case 'loop_slides':
+        this.positions = [];
+        this.radiosContainer.innerHTML = '';
+        this.radios = [];
+
+
+        Array.from(this.children).forEach(slide=>{
+          this.positions.push(slide.offsetLeft);
+        });
+        if(this.nDisplaySlides>1){
+          if(!this.loopSlides){
+            this.positions.splice(1-this.nDisplaySlides);
+          }
+        }
+        this.positions.forEach(()=>{
+          let radio = document.createElement("input");
+          radio.type='radio';
+          radio.name='position';
+          this.radiosContainer.appendChild(radio);
+          this.radios.push(radio);
+        });
+        if(this.radios[this.index]){
+          this.radios[this.index].checked=true;
         }
       break;
       case 'height':
@@ -319,7 +377,6 @@ class SlidingCarousel extends HTMLElement {
       default:
         throw 'attempt to change unknown attribute';
       case 'smooth_scroll':
-      case 'loop_slides':
     }
   }
 
@@ -422,10 +479,10 @@ document.querySelector('#logo').innerHTML += `
 //container = document.querySelector('sliding-carousel').shadowRoot.querySelector('div')
 //container.scrollTo($$('figure')[1].offsetLeft,0)
 //document.querySelector('sliding-carousel').setAttribute('n_display_slides',3)
-document.querySelector('sliding-carousel').setAttribute('hide_prev_button','')
+document.querySelector('sliding-carousel').setAttribute('hide_prev_button','false')
 //document.querySelector('sliding-carousel').setAttribute('hide_radios','true')
 document.querySelector('sliding-carousel').setAttribute('height','100px')
 document.querySelector('sliding-carousel').setAttribute('smooth_scroll','true')
-//document.querySelector('sliding-carousel').setAttribute('loop_slides','true')
+document.querySelector('sliding-carousel').setAttribute('loop_slides','true')
 
 */
