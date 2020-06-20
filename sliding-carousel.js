@@ -8,8 +8,8 @@ class SlidingCarousel extends HTMLElement {
     this.container = document.createElement("div");
     Object.assign(this.container.style,{
       position: 'relative',
-      width: this.style.width,
-      height: '100%',
+      width: this.width,
+      height: this.height,
       overflow: 'hidden'
     });
 
@@ -17,10 +17,11 @@ class SlidingCarousel extends HTMLElement {
     Object.assign(this.prevButton.style,{
       position: 'absolute',
       zIndex: 1,
-      height: '93%',
+      height: this.hideRadios? '100%': '93%',
       opacity: '50%',
       fontSize: '36px'
     });
+    if(this.hidePrevButton) this.prevButton.style.display = 'none';
     this.prevButton.innerHTML = '<';
     this.container.appendChild(this.prevButton);
 
@@ -41,10 +42,11 @@ class SlidingCarousel extends HTMLElement {
       position: 'absolute',
       right: 0,
       zIndex: 1,
-      height: '93%',
+      height: this.hideRadios? '100%': '93%',
       opacity: '50%',
       fontSize: '36px'
     });
+    if(this.hideNextButton) this.nextButton.style.display = 'none';
     this.nextButton.innerHTML = '>';
     this.container.appendChild(this.nextButton);
 
@@ -56,6 +58,7 @@ class SlidingCarousel extends HTMLElement {
       width: '100%',
       textAlign: 'center'
     });
+    if(this.hideRadios) this.radiosContainer.style.display='none';
     this.container.appendChild(this.radiosContainer);
 
     shadowRoot.appendChild(this.container);
@@ -141,26 +144,25 @@ class SlidingCarousel extends HTMLElement {
     }
     console.log(this.getAttribute('n_display_slides'));
 
-    this.childNodes.forEach(figure=>{
-      if(figure.tagName!=='FIGURE') return;
-      console.log(figure);
+    Array.from(this.children).forEach(slide=>{
+      console.log(slide);
       let nDisplaySlides = this.getAttribute('n_display_slides');
       nDisplaySlides = Number(nDisplaySlides);
       console.log(nDisplaySlides)
-      Object.assign(figure.style,{
+      Object.assign(slide.style,{
         position: 'relative',
         display: 'inline-block',
         width: `${100/nDisplaySlides}%`,
-        height: '93%',
+        height: this.hideRadios? '100%': '93%',
         padding: 0,
         margin: 0
       });
-      let img = figure.querySelector('img');
+      let img = slide.querySelector('img');
       Object.assign(img.style,{
         width:'100%',
         height: '100%'
       });
-      let figcaption = figure.querySelector('figcaption')
+      let figcaption = slide.querySelector('figcaption')
       Object.assign(figcaption.style,{
         position:'absolute',
         top: '50%',
@@ -168,7 +170,7 @@ class SlidingCarousel extends HTMLElement {
         transform: 'translate(-50%, -50%)'
       });
 
-      this.positions.push(figure.offsetLeft);
+      this.positions.push(slide.offsetLeft);
       console.dir(figcaption)
     });
     this.positions.splice(1-this.nDisplaySlides);
@@ -192,7 +194,7 @@ class SlidingCarousel extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['n_display_slides','test'];
+    return ['n_display_slides','hide_prev_button','hide_next_button','hide_radios','width','height'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -204,11 +206,10 @@ class SlidingCarousel extends HTMLElement {
         this.radiosContainer.innerHTML = '';
         this.radios = [];
 
-        this.childNodes.forEach(figure=>{
-          console.log(figure)
-          if(figure.tagName!=='FIGURE') return;
-          figure.style.width=`${100/newValue}%`;
-          this.positions.push(figure.offsetLeft);
+        Array.from(this.children).forEach(slide=>{
+          console.log(slide)
+          slide.style.width=`${100/newValue}%`;
+          this.positions.push(slide.offsetLeft);
         });
         if(this.nDisplaySlides>1){
           this.positions.splice(1-this.nDisplaySlides);
@@ -226,15 +227,77 @@ class SlidingCarousel extends HTMLElement {
         console.log(this.positions)
         this.appendHandlers();
       break;
+      case 'hide_prev_button':
+        if(this.hidePrevButton) this.prevButton.style.display = 'none';
+        else this.prevButton.style.display = '';
+      break;
+      case 'hide_next_button':
+        if(this.hideNextButton) this.nextButton.style.display = 'none';
+        else this.nextButton.style.display = '';
+      break;
+      case 'hide_radios':
+        this.radiosContainer.style.display = this.hideRadios? 'none': '';
+        this.prevButton.style.height = this.hideRadios? '100%': '93%';
+        this.nextButton.style.height = this.hideRadios? '100%': '93%';
+        Array.from(this.children).forEach(slide=>{
+          console.log(slide)
+          slide.style.height=this.hideRadios? '100%': '93%';
+        });
+      break;
+      case 'width':
+        this.container.style.width = newValue;
+      break;
+      case 'height':
+        this.container.style.height = newValue;
+      break;
+      default:
+        throw 'attempt to change unknown attribute';
     }
   }
 
   get nDisplaySlides() {
     return this.getAttribute('n_display_slides');
   }
-
   set nDisplaySlides(newValue) {
     this.setAttribute('n_display_slides', newValue);
+  }
+
+  get hidePrevButton() {
+    let mustHidePrevButton = this.hasAttribute('hide_prev_button')
+    &&this.getAttribute('hide_prev_button')!=='false';
+    return mustHidePrevButton;
+  }
+  set hidePrevButton(newValue) {
+    this.setAttribute('hide_prev_button', newValue);
+  }
+  get hideNextButton() {
+    let mustHideNextButton = this.hasAttribute('hide_next_button')
+    &&this.getAttribute('hide_next_button')!=='false';
+    return mustHideNextButton;
+  }
+  set hideNextButton(newValue) {
+    this.setAttribute('hide_next_button', newValue);
+  }
+  get hideRadios() {
+    let mustHideRadios = this.hasAttribute('hide_radios')
+    &&this.getAttribute('hide_radios')!=='false';
+    return mustHideRadios;
+  }
+  set hideRadios(newValue) {
+    this.setAttribute('hide_radios', newValue);
+  }
+
+  get width() {
+    return this.getAttribute('width');
+  }
+  set width(newValue) {
+    this.setAttribute('width', newValue);
+  }
+  get height() {
+    return this.getAttribute('height');
+  }
+  set height(newValue) {
+    this.setAttribute('height', newValue);
   }
 
   adoptedCallback() {
@@ -249,7 +312,7 @@ customElements.define("sliding-carousel", SlidingCarousel);
 /*
 
 document.querySelector('#logo').innerHTML += `
-<sliding-carousel style='width: 700px; height: 300px;' n_display_slides=2>
+<sliding-carousel width='700px' height='300px' n_display_slides=2 hide_prev_button>
   <figure>
     <img src="https://picsum.photos/200/300" />
     <figcaption>random image 1</figcaption>
@@ -273,4 +336,8 @@ document.querySelector('#logo').innerHTML += `
 //container = document.querySelector('sliding-carousel').shadowRoot.querySelector('div')
 //container.scrollTo($$('figure')[1].offsetLeft,0)
 //document.querySelector('sliding-carousel').setAttribute('n_display_slides',3)
+document.querySelector('sliding-carousel').setAttribute('hide_prev_button','')
+//document.querySelector('sliding-carousel').setAttribute('hide_radios','true')
+document.querySelector('sliding-carousel').setAttribute('height','')
+
 */
