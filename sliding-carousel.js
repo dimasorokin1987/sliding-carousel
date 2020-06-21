@@ -256,8 +256,9 @@ class SlidingCarousel extends HTMLElement {
     if(this.hideRadios) this.radiosContainer.style.display='none';
 
     console.log('connectedCallback this.children', this.children);
-    console.log('connectedCallback this.slides.children', this.slides.children);
-    console.log('connectedCallback this.slides', this.slides);
+    console.log('connectedCallback this.childNodes ', this.childNodes);
+    console.log('connectedCallback this.childNodes length', this.childNodes.length);
+
     Array.from(this.childNodes)
     .filter(node=>node.nodeType===1)
     .forEach(slide=>{
@@ -479,7 +480,9 @@ class SlidingCarousel extends HTMLElement {
   }
 
   adoptedCallback() {
-
+    console.log('adoptedCallback this.children', this.children);
+    console.log('adoptedCallback this.childNodes ', this.childNodes);
+    console.log('adoptedCallback this.childNodes length', this.childNodes.length);
   }
 }
 
