@@ -33,7 +33,8 @@ class SlidingCarousel extends HTMLElement {
       overflowX: 'scroll',
       width: '100%',
       height: '100%',
-      paddingBottom: '17px'
+      paddingBottom: '17px',
+      fontSize: 0
     });
     this.slides.innerHTML = '<slot></slot>';
     this.container.appendChild(this.slides);
@@ -248,7 +249,8 @@ class SlidingCarousel extends HTMLElement {
         position:'absolute',
         top: '50%',
         left: '50%',
-        transform: 'translate(-50%, -50%)'
+        transform: 'translate(-50%, -50%)',
+        fontSize: '32px'
       });
 
       this.positions.push(slide.offsetLeft);
@@ -451,11 +453,11 @@ class SlidingCarousel extends HTMLElement {
 customElements.define("sliding-carousel", SlidingCarousel);
 
 
-/*
+
 
 
 document.querySelector('#logo').innerHTML += `
-<sliding-carousel width='700px' height='300px' n_display_slides=2 hide_prev_button>
+<sliding-carousel width='700px' height='300px' n_display_slides=3>
   <figure>
     <img src="https://picsum.photos/200/300" />
     <figcaption>random image 1</figcaption>
@@ -472,6 +474,10 @@ document.querySelector('#logo').innerHTML += `
     <img src="https://picsum.photos/200/300" />
     <figcaption>random image 4</figcaption>
   </figure>
+  <figure>
+    <img src="https://picsum.photos/200/300" />
+    <figcaption>random image 5</figcaption>
+  </figure>
 </sliding-carousel>
 `;
 
@@ -485,4 +491,3 @@ document.querySelector('sliding-carousel').setAttribute('height','100px')
 document.querySelector('sliding-carousel').setAttribute('smooth_scroll','true')
 document.querySelector('sliding-carousel').setAttribute('loop_slides','true')
 
-*/
