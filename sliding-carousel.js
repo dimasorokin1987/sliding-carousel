@@ -255,12 +255,19 @@ class SlidingCarousel extends HTMLElement {
     if(this.hideNextButton) this.nextButton.style.display = 'none';
     if(this.hideRadios) this.radiosContainer.style.display='none';
 
+
     Array.from(this.children).forEach(slide=>{
+      console.log(slide);
+      let nDisplaySlides = this.getAttribute('n_display_slides');
+      nDisplaySlides = Number(nDisplaySlides);
+      console.log(nDisplaySlides)
       Object.assign(slide.style,{
         position: 'relative',
         display: 'inline-block',
         padding: 0,
-        margin: 0
+        margin: 0,
+        width: `${100/nDisplaySlides}%`,
+        height: this.hideRadios? '100%': '93%'
       });
       let img = slide.querySelector('img');
       Object.assign(img.style,{
@@ -274,17 +281,6 @@ class SlidingCarousel extends HTMLElement {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         fontSize: '32px'
-      });
-    });
-
-    Array.from(this.children).forEach(slide=>{
-      console.log(slide);
-      let nDisplaySlides = this.getAttribute('n_display_slides');
-      nDisplaySlides = Number(nDisplaySlides);
-      console.log(nDisplaySlides)
-      Object.assign(slide.style,{
-        width: `${100/nDisplaySlides}%`,
-        height: this.hideRadios? '100%': '93%',
       });
       this.positions.push(slide.offsetLeft);
     });
