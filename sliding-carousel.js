@@ -67,34 +67,6 @@ class SlidingCarousel extends HTMLElement {
     this.slides = this.container.querySelector('.slides');
     this.nextButton = this.container.querySelector('.nextButton');
     this.radiosContainer = this.container.querySelector('.radiosContainer');
-
-    this.prevButton.style.height = this.hideRadios? '100%': '93%';
-    if(this.hidePrevButton) this.prevButton.style.display = 'none';
-    this.nextButton.style.height = this.hideRadios? '100%': '93%';
-    if(this.hideNextButton) this.nextButton.style.display = 'none';
-    if(this.hideRadios) this.radiosContainer.style.display='none';
-
-    Array.from(this.children).forEach(slide=>{
-      Object.assign(slide.style,{
-        position: 'relative',
-        display: 'inline-block',
-        padding: 0,
-        margin: 0
-      });
-      let img = slide.querySelector('img');
-      Object.assign(img.style,{
-        width: '100%',
-        height: '100%'
-      });
-      let figcaption = slide.querySelector('figcaption');
-      Object.assign(figcaption.style,{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        fontSize: '32px'
-      });
-    });
     console.log("created");
   }
 
@@ -271,6 +243,35 @@ class SlidingCarousel extends HTMLElement {
       this.setAttribute('n_display_slides',1);
     }
     console.log(this.getAttribute('n_display_slides'));
+
+
+    this.prevButton.style.height = this.hideRadios? '100%': '93%';
+    if(this.hidePrevButton) this.prevButton.style.display = 'none';
+    this.nextButton.style.height = this.hideRadios? '100%': '93%';
+    if(this.hideNextButton) this.nextButton.style.display = 'none';
+    if(this.hideRadios) this.radiosContainer.style.display='none';
+
+    Array.from(this.children).forEach(slide=>{
+      Object.assign(slide.style,{
+        position: 'relative',
+        display: 'inline-block',
+        padding: 0,
+        margin: 0
+      });
+      let img = slide.querySelector('img');
+      Object.assign(img.style,{
+        width: '100%',
+        height: '100%'
+      });
+      let figcaption = slide.querySelector('figcaption');
+      Object.assign(figcaption.style,{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        fontSize: '32px'
+      });
+    });
 
     Object.assign(this.container.style,{
       width: this.width,
