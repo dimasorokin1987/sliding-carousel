@@ -258,7 +258,9 @@ class SlidingCarousel extends HTMLElement {
     console.log('connectedCallback this.children', this.children);
     console.log('connectedCallback this.slides.children', this.slides.children);
     console.log('connectedCallback this.slides', this.slides);
-    Array.from(this.children).forEach(slide=>{
+    Array.from(this.childNodes)
+    .filter(node=>node.nodeType===1)
+    .forEach(slide=>{
       console.log(slide);
       let nDisplaySlides = this.getAttribute('n_display_slides');
       nDisplaySlides = Number(nDisplaySlides);
