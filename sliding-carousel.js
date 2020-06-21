@@ -1,69 +1,100 @@
 class SlidingCarousel extends HTMLElement {
+  static templateHtml = `
+    <style>
+      .container {
+        position: relative;
+        overflow: hidden;
+      }
+      .prevButton {
+        position: absolute;
+        z-index: 1;
+        opacity: 50%;
+        font-size: 36px;
+      }
+      .slides {
+        position: absolute;
+        white-space: nowrap;
+        overflow-x: scroll;
+        width: 100%;
+        height: 100%;
+        padding-bottom: 17px;
+        font-size: 0;
+      }
+      .nextButton {
+        position: absolute;
+        right: 0;
+        z-index: 1;
+        opacity: 50%;
+        font-size: 36px;
+      }
+      .radiosContainer {
+        position: absolute;
+        bottom: 0;
+        z-index: 1;
+        width: 100%;
+        text-align: center;
+      }
+    </style>
+    <div class="container">
+      <button class='prevButton'>&lt;</button>
+      <div class='slides'>
+          <slot></slot>
+      </div>
+      <button class='nextButton'>&gt;</button>
+      <div class='radiosContainer'></div>
+    </div>
+  `;
+  static template;
+
   constructor() {
     super();
     this.positions = [];
     this.radios = [];
     this.index = 0;
     this.shift = 0;
-    let shadowRoot = this.attachShadow({mode: "open"});
-    this.container = document.createElement("div");
-    // Object.assign(this.container.style,{
-    //   position: 'relative',
-    //   width: this.width,
-    //   height: this.height,
-    //   overflow: 'hidden'
-    // });
 
-    this.prevButton = document.createElement("button");
-    Object.assign(this.prevButton.style,{
-      position: 'absolute',
-      zIndex: 1,
-      height: this.hideRadios? '100%': '93%',
-      opacity: '50%',
-      fontSize: '36px'
-    });
+    if(!SlidingCarousel.template){
+      SlidingCarousel.template = document.createElement('template');
+      SlidingCarousel.template.innerHTML = SlidingCarousel.templateHtml;
+    }
+
+    //let shadowRoot = this.attachShadow({mode: "open"});
+    const shadowRoot = this.attachShadow({mode: 'closed'});
+    shadowRoot.appendChild(SlidingCarousel.template.content.cloneNode(true));
+
+    this.container = shadowRoot.querySelector('.container');
+    this.prevButton = this.container.querySelector('.prevButton');
+    this.slides = this.container.querySelector('.slides');
+    this.nextButton = this.container.querySelector('.nextButton');
+    this.radiosContainer = this.container.querySelector('.radiosContainer');
+
+    this.prevButton.style.height = this.hideRadios? '100%': '93%';
     if(this.hidePrevButton) this.prevButton.style.display = 'none';
-    this.prevButton.innerHTML = '<';
-    this.container.appendChild(this.prevButton);
-
-    this.slides = document.createElement("div");
-    Object.assign(this.slides.style,{
-      position: 'absolute',
-      whiteSpace: 'nowrap',
-      overflowX: 'scroll',
-      width: '100%',
-      height: '100%',
-      paddingBottom: '17px',
-      fontSize: 0
-    });
-    this.slides.innerHTML = '<slot></slot>';
-    this.container.appendChild(this.slides);
-
-    this.nextButton = document.createElement("button");
-    Object.assign(this.nextButton.style,{
-      position: 'absolute',
-      right: 0,
-      zIndex: 1,
-      height: this.hideRadios? '100%': '93%',
-      opacity: '50%',
-      fontSize: '36px'
-    });
+    this.nextButton.style.height = this.hideRadios? '100%': '93%';
     if(this.hideNextButton) this.nextButton.style.display = 'none';
-    this.nextButton.innerHTML = '>';
-    this.container.appendChild(this.nextButton);
-
-    this.radiosContainer = document.createElement("div");
-    Object.assign(this.radiosContainer.style,{
-      position: 'absolute',
-      bottom: 0,
-      zIndex: 1,
-      width: '100%',
-      textAlign: 'center'
-    });
     if(this.hideRadios) this.radiosContainer.style.display='none';
-    this.container.appendChild(this.radiosContainer);
 
-    shadowRoot.appendChild(this.container);
+    Array.from(this.children).forEach(slide=>{
+      Object.assign(slide.style,{
+        position: 'relative',
+        display: 'inline-block',
+        padding: 0,
+        margin: 0
+      });
+      let img = slide.querySelector('img');
+      Object.assign(img.style,{
+        width: '100%',
+        height: '100%'
+      });
+      let figcaption = slide.querySelector('figcaption');
+      Object.assign(figcaption.style,{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        fontSize: '32px'
+      });
+    });
     console.log("created");
   }
 
@@ -242,10 +273,8 @@ class SlidingCarousel extends HTMLElement {
     console.log(this.getAttribute('n_display_slides'));
 
     Object.assign(this.container.style,{
-      position: 'relative',
       width: this.width,
       height: this.height,
-      overflow: 'hidden'
     });
 
     Array.from(this.children).forEach(slide=>{
@@ -254,29 +283,10 @@ class SlidingCarousel extends HTMLElement {
       nDisplaySlides = Number(nDisplaySlides);
       console.log(nDisplaySlides)
       Object.assign(slide.style,{
-        position: 'relative',
-        display: 'inline-block',
         width: `${100/nDisplaySlides}%`,
         height: this.hideRadios? '100%': '93%',
-        padding: 0,
-        margin: 0
       });
-      let img = slide.querySelector('img');
-      Object.assign(img.style,{
-        width:'100%',
-        height: '100%'
-      });
-      let figcaption = slide.querySelector('figcaption')
-      Object.assign(figcaption.style,{
-        position:'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        fontSize: '32px'
-      });
-
       this.positions.push(slide.offsetLeft);
-      console.dir(figcaption)
     });
     if(!this.loopSlides){
       this.positions.splice(1-this.nDisplaySlides);
@@ -375,7 +385,6 @@ class SlidingCarousel extends HTMLElement {
         this.positions = [];
         this.radiosContainer.innerHTML = '';
         this.radios = [];
-
 
         Array.from(this.children).forEach(slide=>{
           this.positions.push(slide.offsetLeft);
@@ -477,8 +486,8 @@ class SlidingCarousel extends HTMLElement {
 customElements.define("sliding-carousel", SlidingCarousel);
 
 
-
 /*
+
 
 document.querySelector('#logo').innerHTML += `
 <sliding-carousel width='700px' height='300px' n_display_slides=3>
