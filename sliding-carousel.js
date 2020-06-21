@@ -69,8 +69,8 @@ class SlidingCarousel extends HTMLElement {
 
   scrollToIndex(nextIndex){
     this.slides.scrollTo(this.positions[nextIndex],0);
-    this.radios[nextIndex].checked=true;
     this.index = nextIndex;
+    this.radios[this.origIndex].checked=true;
   };
 
   smoothScrollToIndex(nextIndex){
@@ -103,10 +103,9 @@ class SlidingCarousel extends HTMLElement {
     this.children[nextIndex].scrollIntoView({
       behavior: 'smooth', block: 'nearest', inline: 'start'
     });
-    let origIndex = (nextIndex-this.shift+n)%n;
-    console.log(origIndex,nextIndex,this.shift,n)
-    this.radios[origIndex].checked=true;
     this.index = nextIndex;
+    console.log(this.origIndex,nextIndex,this.shift,n)
+    this.radios[this.origIndex].checked=true;
   };
 
   get prevIndex(){
@@ -118,6 +117,12 @@ class SlidingCarousel extends HTMLElement {
     if(this.loopSlides) return (this.index + 1)%this.positions.length;
     else return Math.min(this.index + 1, this.positions.length - 1);
   };
+
+  get origIndex(){
+    let n = this.children.length;
+    return (this.index-this.shift+n)%n;
+  }
+
 
   updateIndexFromPosition(){
     let currentPosition = this.slides.scrollLeft;
@@ -132,7 +137,7 @@ class SlidingCarousel extends HTMLElement {
       //console.log(currentPosition,pos,dist,i)
     });
     this.index = nearestIndex;
-    this.radios[this.index].checked=true;
+    this.radios[this.origIndex].checked=true;
   };
 
   appendHandlers(){
@@ -145,9 +150,13 @@ class SlidingCarousel extends HTMLElement {
       else this.scrollToIndex(this.nextIndex);
     };
     this.radios.forEach((radio,i)=>{
+      console.log('radio',i)
       radio.onclick = ()=>{
-        if(this.smoothScroll) this.smoothScrollToIndex(i);
-        else this.scrollToIndex(i);
+        console.log('radio handler',i)
+        let n = this.children.length;
+        let j = (i+this.shift+n)%n;
+        if(this.smoothScroll) this.smoothScrollToIndex(j);
+        else this.scrollToIndex(j);
       };
     });
     this.slides.onmousewheel = e => { 
@@ -266,8 +275,9 @@ class SlidingCarousel extends HTMLElement {
       this.radiosContainer.appendChild(radio);
       this.radios.push(radio);
     });
-    if(this.radios[this.index]){
-      this.radios[this.index].checked=true;
+
+    if(this.radios[this.origIndex]){
+      this.radios[this.origIndex].checked=true;
     }
     this.appendHandlers();
     this.isReady = true;
@@ -312,8 +322,8 @@ class SlidingCarousel extends HTMLElement {
           this.radiosContainer.appendChild(radio);
           this.radios.push(radio);
         });
-        if(this.radios[this.index]){
-          this.radios[this.index].checked=true;
+        if(this.radios[this.origIndex]){
+          this.radios[this.origIndex].checked=true;
         }
         console.log(this.positions)
         this.appendHandlers();
@@ -369,9 +379,10 @@ class SlidingCarousel extends HTMLElement {
           this.radiosContainer.appendChild(radio);
           this.radios.push(radio);
         });
-        if(this.radios[this.index]){
-          this.radios[this.index].checked=true;
+        if(this.radios[this.origIndex]){
+          this.radios[this.origIndex].checked=true;
         }
+        this.appendHandlers();
       break;
       case 'height':
         this.container.style.height = newValue;
@@ -455,7 +466,7 @@ customElements.define("sliding-carousel", SlidingCarousel);
 
 
 
-
+/*
 document.querySelector('#logo').innerHTML += `
 <sliding-carousel width='700px' height='300px' n_display_slides=3>
   <figure>
@@ -491,3 +502,4 @@ document.querySelector('sliding-carousel').setAttribute('height','100px')
 document.querySelector('sliding-carousel').setAttribute('smooth_scroll','true')
 document.querySelector('sliding-carousel').setAttribute('loop_slides','true')
 
+*/
