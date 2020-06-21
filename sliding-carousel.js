@@ -170,16 +170,6 @@ class SlidingCarousel extends HTMLElement {
       if(this.smoothScroll) this.smoothScrollToIndex(this.nextIndex);
       else this.scrollToIndex(this.nextIndex);
     };
-    this.radios.forEach((radio,i)=>{
-      console.log('radio',i)
-      radio.onclick = ()=>{
-        console.log('radio handler',i)
-        let n = this.children.length;
-        let j = (i+this.shift+n)%n;
-        if(this.smoothScroll) this.smoothScrollToIndex(j);
-        else this.scrollToIndex(j);
-      };
-    });
     this.slides.onmousewheel = e => { 
       this.userScroll = true; 
     };
@@ -275,7 +265,49 @@ class SlidingCarousel extends HTMLElement {
       transform: 'translate(-50%, -50%)',
       fontSize: '32px'
     });
-  }
+  };
+
+  updatePositions(){
+    this.positions = [];
+    const slot = this.shadowRoot.querySelector('slot');
+    slot.assignedElements().forEach(slide=>{
+      this.positions.push(slide.offsetLeft);
+    });
+    if(this.nDisplaySlides>1){
+      if(!this.loopSlides){
+        let n = this.positions.length;
+        this.positions.splice(n-this.nDisplaySlides+1);
+      }
+    }
+  };
+
+  updateRadios(){
+    this.radiosContainer.innerHTML = '';
+    this.radios = [];
+
+    this.positions.forEach(()=>{
+      let radio = document.createElement("input");
+      radio.type='radio';
+      radio.name='position';
+      this.radiosContainer.appendChild(radio);
+      this.radios.push(radio);
+    });
+
+    this.radios.forEach((radio,i)=>{
+      console.log('radio',i)
+      radio.onclick = ()=>{
+        console.log('radio handler',i)
+        let n = this.children.length;
+        let j = (i+this.shift+n)%n;
+        if(this.smoothScroll) this.smoothScrollToIndex(j);
+        else this.scrollToIndex(j);
+      };
+    });
+
+    if(this.radios[this.origIndex]){
+      this.radios[this.origIndex].checked=true;
+    }
+  };
 
   connectedCallback() {
     if(!this.hasAttribute('n_display_slides')){
@@ -302,35 +334,24 @@ class SlidingCarousel extends HTMLElement {
     //Array.from(this.childNodes)
     //.filter(node=>node.nodeType===1)
     const slot = this.shadowRoot.querySelector('slot');
-    slot.assignedElements()
-    .forEach(slide=>{
+    slot.assignedElements().forEach(slide=>{
       console.log('connectedCallback', slide);
       this.updateSlideStyle(slide);
-      this.positions.push(slide.offsetLeft);
     });
+    this.updatePositions();
+    this.updateRadios();
+
+
     slot.addEventListener('slotchange', (event) => {
       event.target.assignedElements().forEach(slide => {
         console.log('slotchange handler', slide);
         this.updateSlideStyle(slide);
         this.positions.push(slide.offsetLeft);
       });
+      this.updatePositions();
+      this.updateRadios();
     });
 
-
-    if(!this.loopSlides){
-      this.positions.splice(1-this.nDisplaySlides);
-    }
-    this.positions.forEach(()=>{
-      let radio = document.createElement("input");
-      radio.type='radio';
-      radio.name='position';
-      this.radiosContainer.appendChild(radio);
-      this.radios.push(radio);
-    });
-
-    if(this.radios[this.origIndex]){
-      this.radios[this.origIndex].checked=true;
-    }
     this.appendHandlers();
     this.isReady = true;
     console.log('connected');
@@ -353,30 +374,12 @@ class SlidingCarousel extends HTMLElement {
     if(!this.isReady)return;
     switch(name) {
       case 'n_display_slides':
-        this.positions = [];
-        this.radiosContainer.innerHTML = '';
-        this.radios = [];
-
         Array.from(this.children).forEach(slide=>{
           console.log(slide)
           slide.style.width=`${100/newValue}%`;
-          this.positions.push(slide.offsetLeft);
         });
-        if(this.nDisplaySlides>1){
-          if(!this.loopSlides){
-            this.positions.splice(1-this.nDisplaySlides);
-          }
-        }
-        this.positions.forEach(()=>{
-          let radio = document.createElement("input");
-          radio.type='radio';
-          radio.name='position';
-          this.radiosContainer.appendChild(radio);
-          this.radios.push(radio);
-        });
-        if(this.radios[this.origIndex]){
-          this.radios[this.origIndex].checked=true;
-        }
+        this.updatePositions();
+        this.updateRadios();
         console.log(this.positions)
         this.appendHandlers();
       break;
@@ -399,40 +402,11 @@ class SlidingCarousel extends HTMLElement {
       break;
       case 'width':
         this.container.style.width = newValue;
-        this.positions = [];
-
-        Array.from(this.children).forEach(slide=>{
-          this.positions.push(slide.offsetLeft);
-        });
-        if(this.nDisplaySlides>1){
-          if(!this.loopSlides){
-            this.positions.splice(1-this.nDisplaySlides);
-          }
-        }
+        this.updatePositions();
       break;
       case 'loop_slides':
-        this.positions = [];
-        this.radiosContainer.innerHTML = '';
-        this.radios = [];
-
-        Array.from(this.children).forEach(slide=>{
-          this.positions.push(slide.offsetLeft);
-        });
-        if(this.nDisplaySlides>1){
-          if(!this.loopSlides){
-            this.positions.splice(1-this.nDisplaySlides);
-          }
-        }
-        this.positions.forEach(()=>{
-          let radio = document.createElement("input");
-          radio.type='radio';
-          radio.name='position';
-          this.radiosContainer.appendChild(radio);
-          this.radios.push(radio);
-        });
-        if(this.radios[this.origIndex]){
-          this.radios[this.origIndex].checked=true;
-        }
+        this.updatePositions();
+        this.updateRadios();
         this.appendHandlers();
       break;
       case 'height':
