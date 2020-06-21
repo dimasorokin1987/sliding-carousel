@@ -61,8 +61,8 @@ class SlidingCarousel extends HTMLElement {
       SlidingCarousel.template.innerHTML = SlidingCarousel.templateHtml;
     }
 
-    //let shadowRoot = this.attachShadow({mode: "open"});
-    const shadowRoot = this.attachShadow({mode: 'closed'});
+    let shadowRoot = this.attachShadow({mode: "open"});
+    //const shadowRoot = this.attachShadow({mode: 'closed'});
     shadowRoot.appendChild(SlidingCarousel.template.content.cloneNode(true));
 
     this.container = shadowRoot.querySelector('.container');
