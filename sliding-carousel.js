@@ -72,6 +72,9 @@ class SlidingCarousel extends HTMLElement {
     this.radiosContainer = this.container.querySelector('.radiosContainer');
 
 
+
+
+
     console.log('constructor2 this.children', this.children);
     console.log('constructor2 this.childNodes ', this.childNodes);
     console.log('constructor2 this.childNodes length', this.childNodes.length);
@@ -245,6 +248,33 @@ class SlidingCarousel extends HTMLElement {
         }
       }
     }, 100);
+  };
+
+  updateSlideStyle(slide){
+    let nDisplaySlides = this.getAttribute('n_display_slides');
+    nDisplaySlides = Number(nDisplaySlides);
+    console.log(nDisplaySlides)
+    Object.assign(slide.style,{
+      position: 'relative',
+      display: 'inline-block',
+      padding: 0,
+      margin: 0,
+      width: `${100/nDisplaySlides}%`,
+      height: this.hideRadios? '100%': '93%'
+    });
+    let img = slide.querySelector('img');
+    Object.assign(img.style,{
+      width: '100%',
+      height: '100%'
+    });
+    let figcaption = slide.querySelector('figcaption');
+    Object.assign(figcaption.style,{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      fontSize: '32px'
+    });
   }
 
   connectedCallback() {
@@ -271,35 +301,22 @@ class SlidingCarousel extends HTMLElement {
 
     //Array.from(this.childNodes)
     //.filter(node=>node.nodeType===1)
-    this.container.querySelector('slot').assignedElements()
+    const slot = this.shadowRoot.querySelector('slot');
+    slot.assignedElements()
     .forEach(slide=>{
-      console.log(slide);
-      let nDisplaySlides = this.getAttribute('n_display_slides');
-      nDisplaySlides = Number(nDisplaySlides);
-      console.log(nDisplaySlides)
-      Object.assign(slide.style,{
-        position: 'relative',
-        display: 'inline-block',
-        padding: 0,
-        margin: 0,
-        width: `${100/nDisplaySlides}%`,
-        height: this.hideRadios? '100%': '93%'
-      });
-      let img = slide.querySelector('img');
-      Object.assign(img.style,{
-        width: '100%',
-        height: '100%'
-      });
-      let figcaption = slide.querySelector('figcaption');
-      Object.assign(figcaption.style,{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        fontSize: '32px'
-      });
+      console.log('connectedCallback', slide);
+      this.updateSlideStyle(slide);
       this.positions.push(slide.offsetLeft);
     });
+    slot.addEventListener('slotchange', (event) => {
+      event.target.assignedElements().forEach(slide => {
+        console.log('slotchange handler', slide);
+        this.updateSlideStyle(slide);
+        this.positions.push(slide.offsetLeft);
+      });
+    });
+
+
     if(!this.loopSlides){
       this.positions.splice(1-this.nDisplaySlides);
     }
