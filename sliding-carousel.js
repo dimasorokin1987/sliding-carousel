@@ -244,6 +244,10 @@ class SlidingCarousel extends HTMLElement {
     }
     console.log(this.getAttribute('n_display_slides'));
 
+    Object.assign(this.container.style,{
+      width: this.width,
+      height: this.height,
+    });
 
     this.prevButton.style.height = this.hideRadios? '100%': '93%';
     if(this.hidePrevButton) this.prevButton.style.display = 'none';
@@ -271,11 +275,6 @@ class SlidingCarousel extends HTMLElement {
         transform: 'translate(-50%, -50%)',
         fontSize: '32px'
       });
-    });
-
-    Object.assign(this.container.style,{
-      width: this.width,
-      height: this.height,
     });
 
     Array.from(this.children).forEach(slide=>{
