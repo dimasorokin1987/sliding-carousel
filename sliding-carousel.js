@@ -242,7 +242,7 @@ class SlidingCarousel extends HTMLElement {
     if(!this.hasAttribute('n_display_slides')){
       this.setAttribute('n_display_slides',1);
     }
-    console.log(this.getAttribute('n_display_slides'));
+    console.log('n_display_slides',this.getAttribute('n_display_slides'));
 
     Object.assign(this.container.style,{
       width: this.width,
@@ -255,7 +255,9 @@ class SlidingCarousel extends HTMLElement {
     if(this.hideNextButton) this.nextButton.style.display = 'none';
     if(this.hideRadios) this.radiosContainer.style.display='none';
 
-
+    console.log('connectedCallback this.children', this.children);
+    console.log('connectedCallback this.slides.children', this.slides.children);
+    console.log('connectedCallback this.slides', this.slides);
     Array.from(this.children).forEach(slide=>{
       console.log(slide);
       let nDisplaySlides = this.getAttribute('n_display_slides');
