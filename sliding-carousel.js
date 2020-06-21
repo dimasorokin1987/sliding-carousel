@@ -67,13 +67,7 @@ class SlidingCarousel extends HTMLElement {
     console.log("created");
   }
 
-  scrollToIndex(nextIndex){
-    this.slides.scrollTo(this.positions[nextIndex],0);
-    this.index = nextIndex;
-    this.radios[this.origIndex].checked=true;
-  };
-
-  smoothScrollToIndex(nextIndex){
+  correctBoundNextIndex(nextIndex){
     let n = this.children.length;
     let m = n - this.nDisplaySlides + 1;
     console.log(this.index,nextIndex,n-1,this.index===n-1 && nextIndex===0)
@@ -99,12 +93,24 @@ class SlidingCarousel extends HTMLElement {
         nextIndex = m-1;
       }
     }
+    return nextIndex;
+  }
+
+  scrollToIndex(nextIndex){
+    nextIndex = this.correctBoundNextIndex(nextIndex);
+
+    this.slides.scrollTo(this.positions[nextIndex],0);
+    this.index = nextIndex;
+    this.radios[this.origIndex].checked=true;
+  };
+
+  smoothScrollToIndex(nextIndex){
+    nextIndex = this.correctBoundNextIndex(nextIndex);
 
     this.children[nextIndex].scrollIntoView({
       behavior: 'smooth', block: 'nearest', inline: 'start'
     });
     this.index = nextIndex;
-    console.log(this.origIndex,nextIndex,this.shift,n)
     this.radios[this.origIndex].checked=true;
   };
 
@@ -465,8 +471,8 @@ customElements.define("sliding-carousel", SlidingCarousel);
 
 
 
-
 /*
+
 document.querySelector('#logo').innerHTML += `
 <sliding-carousel width='700px' height='300px' n_display_slides=3>
   <figure>
