@@ -52,6 +52,9 @@ class SlidingCarousel extends HTMLElement {
     this.radios = [];
     this.index = 0;
     this.shift = 0;
+    console.log('constructor1 this.children', this.children);
+    console.log('constructor1 this.childNodes ', this.childNodes);
+    console.log('constructor1 this.childNodes length', this.childNodes.length);
 
     if(!SlidingCarousel.template){
       SlidingCarousel.template = document.createElement('template');
@@ -67,6 +70,12 @@ class SlidingCarousel extends HTMLElement {
     this.slides = this.container.querySelector('.slides');
     this.nextButton = this.container.querySelector('.nextButton');
     this.radiosContainer = this.container.querySelector('.radiosContainer');
+
+
+    console.log('constructor2 this.children', this.children);
+    console.log('constructor2 this.childNodes ', this.childNodes);
+    console.log('constructor2 this.childNodes length', this.childNodes.length);
+
     console.log("created");
   }
 
@@ -263,30 +272,30 @@ class SlidingCarousel extends HTMLElement {
     .filter(node=>node.nodeType===1)
     .forEach(slide=>{
       console.log(slide);
-      let nDisplaySlides = this.getAttribute('n_display_slides');
-      nDisplaySlides = Number(nDisplaySlides);
-      console.log(nDisplaySlides)
-      Object.assign(slide.style,{
-        position: 'relative',
-        display: 'inline-block',
-        padding: 0,
-        margin: 0,
-        width: `${100/nDisplaySlides}%`,
-        height: this.hideRadios? '100%': '93%'
-      });
-      let img = slide.querySelector('img');
-      Object.assign(img.style,{
-        width: '100%',
-        height: '100%'
-      });
-      let figcaption = slide.querySelector('figcaption');
-      Object.assign(figcaption.style,{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        fontSize: '32px'
-      });
+      // let nDisplaySlides = this.getAttribute('n_display_slides');
+      // nDisplaySlides = Number(nDisplaySlides);
+      // console.log(nDisplaySlides)
+      // Object.assign(slide.style,{
+      //   position: 'relative',
+      //   display: 'inline-block',
+      //   padding: 0,
+      //   margin: 0,
+      //   width: `${100/nDisplaySlides}%`,
+      //   height: this.hideRadios? '100%': '93%'
+      // });
+      // let img = slide.querySelector('img');
+      // Object.assign(img.style,{
+      //   width: '100%',
+      //   height: '100%'
+      // });
+      // let figcaption = slide.querySelector('figcaption');
+      // Object.assign(figcaption.style,{
+      //   position: 'absolute',
+      //   top: '50%',
+      //   left: '50%',
+      //   transform: 'translate(-50%, -50%)',
+      //   fontSize: '32px'
+      // });
       this.positions.push(slide.offsetLeft);
     });
     if(!this.loopSlides){
@@ -493,7 +502,7 @@ customElements.define("sliding-carousel", SlidingCarousel);
 
 
 document.querySelector('#logo').innerHTML += `
-<sliding-carousel width='700px' height='300px' n_display_slides=3>
+<sliding-carousel width='700px' height='300px' n_display_slides=3 smooth_scroll loop_slides>
   <figure>
     <img src="https://picsum.photos/200/300" />
     <figcaption>random image 1</figcaption>
