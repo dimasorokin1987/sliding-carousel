@@ -7,12 +7,12 @@ class SlidingCarousel extends HTMLElement {
     this.shift = 0;
     let shadowRoot = this.attachShadow({mode: "open"});
     this.container = document.createElement("div");
-    Object.assign(this.container.style,{
-      position: 'relative',
-      width: this.width,
-      height: this.height,
-      overflow: 'hidden'
-    });
+    // Object.assign(this.container.style,{
+    //   position: 'relative',
+    //   width: this.width,
+    //   height: this.height,
+    //   overflow: 'hidden'
+    // });
 
     this.prevButton = document.createElement("button");
     Object.assign(this.prevButton.style,{
@@ -240,6 +240,13 @@ class SlidingCarousel extends HTMLElement {
       this.setAttribute('n_display_slides',1);
     }
     console.log(this.getAttribute('n_display_slides'));
+
+    Object.assign(this.container.style,{
+      position: 'relative',
+      width: this.width,
+      height: this.height,
+      overflow: 'hidden'
+    });
 
     Array.from(this.children).forEach(slide=>{
       console.log(slide);
