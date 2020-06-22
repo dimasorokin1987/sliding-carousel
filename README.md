@@ -36,7 +36,7 @@ document.querySelector('sliding-carousel').setAttribute('loop_slides','true');
 ```
 ## looped sliding carousel usage
 ```html
-<link rel="stylesheet" type="text/css" href="sliding-carousel.css">
+<link rel="stylesheet" type="text/css" href="https://dimasorokin1987.github.io/sliding-carousel/sliding-carousel.css">
 ...
 <div class='sliding-carousel' id='container1'>
     <button class='prevButton'>&lt;</button>
@@ -93,7 +93,7 @@ document.querySelector('sliding-carousel').setAttribute('loop_slides','true');
   </div>
 
   <script type='module'>
-    import {applyLoopedSlidingCarousel} from './looped-sliding-carousel.mjs';
+    import {applyLoopedSlidingCarousel} from 'https://dimasorokin1987.github.io/sliding-carousel/looped-sliding-carousel.mjs';
     applyLoopedSlidingCarousel('#container1.sliding-carousel');
     applyLoopedSlidingCarousel('#container2.sliding-carousel', 3);
   </script>
