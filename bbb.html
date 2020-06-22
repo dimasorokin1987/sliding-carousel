@@ -116,8 +116,9 @@
     let $log = document.querySelector('.log');
     let $clearLogButton = document.querySelector('.clearLogButton');
 
-
+    const axMax = 0.01;
     const vxMax = 0.3;
+    const dtStep = 25;
 
     let smoothScroll = true;
     let loopSlides = true;
@@ -140,41 +141,6 @@
     let prevUserScrollTime;
     let interval;
 
-    // const correctBoundNextIndex = (toIndex)=>{
-    //   let n = $slides.children.length;
-    //   let m = n - nDisplaySlides + 1;
-    //   console.log(index,toIndex,n-1,index===n-1 && toIndex===0)
-    //   if(index===0 && toIndex===n-1){
-    //     if(loopSlides){
-    //       $slides.scrollTo(positions[1],0)
-    //       $slides.insertBefore($slides.children[n-1], $slides.children[0]); 
-    //       shift = (shift+1)%n;
-    //       toIndex = 0;
-    //     }
-    //   }
-    //   if(true
-    //     && n-nDisplaySlides<=index && index<n
-    //     && toIndex===(index+1)%n
-    //   ){
-    //     //2->3,3->0
-    //     console.log(111)
-    //     if(loopSlides){
-    //       $slides.appendChild($slides.children[0]);
-    //       $slides.scrollTo(positions[m-2],0)  
-    //       shift = (shift+n-1)%n;
-    //       toIndex = m-1;
-    //     }
-    //   }
-    //   return toIndex;
-    // };
-
-    const scrollToIndex = (toIndex)=>{
-    //  toIndex = correctBoundNextIndex(toIndex);
-
-      $slides.scrollTo(positions[toIndex],0);
-      index = toIndex;
-      $radios.children[origIndex()].checked=true;
-    };
 
     const smoothScrollToIndex = (toIndex)=>{
      // toIndex = correctBoundNextIndex(toIndex);
@@ -236,25 +202,11 @@
       $slides.insertBefore(preSlides[i], $slides.firstElementChild);
       $slides.appendChild(postSlides[i]);
     }
-      
-    // let firstNodeClone = $slides.firstElementChild.cloneNode(true);
-    // let lastNodeClone = $slides.lastElementChild.cloneNode(true);
-
-    // $slides.insertBefore(lastNodeClone, $slides.firstElementChild);
-    // $slides.appendChild(firstNodeClone);
-
 
 
     Array.from($slides.children).forEach(slide=>{
       positions.push(slide.offsetLeft);
     });
-
-    // if(nDisplaySlides>1){
-    //   if(!loopSlides){
-    //     let n = positions.length;
-    //     positions.splice(n-nDisplaySlides+1);
-    //   }
-    // }
 
     index = nDisplaySlides;
     $slides.scrollLeft = positions[index];
@@ -288,14 +240,10 @@
       $slides.scrollLeft-=0.001;
       vx = -vxMax;
       hasNextPosition = true;
-      // if (smoothScroll) smoothScrollToIndex(prevIndex());
-      // else scrollToIndex(prevIndex());
     };
     $nextButton.onclick = () => {
       vx = vxMax;
       hasNextPosition = true;
-      // if (smoothScroll) smoothScrollToIndex(nextIndex());
-      // else scrollToIndex(nextIndex());
     };
     $slides.onmousewheel = e => {
       $log.innerText+='$slides.onmousewheel\n';
@@ -313,35 +261,21 @@
       $log.innerText+='user onscroll\n';
       //console.log('user scroll',e);
 
-      if (smoothScroll) {
-        let currentPosition = $slides.scrollLeft;
-        let currentTime = Date.now();
-        // console.log('currentPosition',currentPosition);
-        // console.log('currentTime',currentTime);
+      let currentPosition = $slides.scrollLeft;
+      let currentTime = Date.now();
+      // console.log('currentPosition',currentPosition);
+      // console.log('currentTime',currentTime);
 
-        if (hasPrev && !hasNextPosition) {
-          let dx = currentPosition - prevX;
-          let dt = currentTime - prevTime;
-          vx = dx / dt;
-          hasNextPosition = true;
-        }
-
-        prevX = currentPosition;
-        prevTime = currentTime;
-        hasPrev = true;
-      } else {
-        let currentScrollTime = Date.now();
-        let isScrollingTimeout = prevUserScrollTime && currentScrollTime < prevUserScrollTime + 100;
-        prevUserScrollTime = currentScrollTime;
-        if (isScrollingTimeout) {
-          $slides.scrollLeft = positions[index];
-        } else {
-          let currentPosition = $slides.scrollLeft;
-          let prevPosition = positions[index];
-          if (currentPosition < prevPosition) scrollToIndex(prevIndex());
-          else if (currentPosition > prevPosition) scrollToIndex(nextIndex());
-        }
+      if (hasPrev && !hasNextPosition) {
+        let dx = currentPosition - prevX;
+        let dt = currentTime - prevTime;
+        vx = dx / dt;
+        hasNextPosition = true;
       }
+
+      prevX = currentPosition;
+      prevTime = currentTime;
+      hasPrev = true;
     }catch(e){
       $log.innerText+='onscroll: '+e+'\n';
     }};
@@ -358,16 +292,15 @@
         let indexNext = vx < 0 ? indexLeft : vx > 0 ? indexRight : index;
         let nextPosition = positions[indexNext];
         let d = nextPosition - currentPosition;
-        //console.log('inter', indexRight, currentPosition, positions)
-        let ax = Math.abs(1 / d * 100 * 10);
-        ax = Math.min(ax, 0.02);
+        let ax = Math.abs(1 / d * dtStep * 10);
+        ax = Math.min(ax, axMax);
         // console.log(ax);
         vx += Math.sign(d) * ax;
         vx = Math.min(vx, vxMax);
         console.log(vx,d);
 
-        if (Math.abs(d) > 100) $slides.scrollLeft += vx * 100;
-        else if (Math.abs(d) > 5) $slides.scrollLeft += 0.3 * d;
+        if (Math.abs(d) > 50) $slides.scrollLeft += vx * dtStep;
+        else if (Math.abs(d) > 5) $slides.scrollLeft += 0.5 * d;
         else {
           $slides.scrollLeft = nextPosition;
           vx = 0;
@@ -389,7 +322,7 @@
       }
     }catch(e){
       $log.innerText+='interval: '+e+'\n';
-    }}, 100);
+    }}, dtStep);
 
 
     $clearLogButton.onclick=()=>{
