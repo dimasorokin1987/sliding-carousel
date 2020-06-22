@@ -259,6 +259,11 @@
       else scrollToIndex(nextIndex());
     };
     $slides.onmousewheel = e => {
+      $log.innerText+='$slides.onmousewheel\n';
+      userScroll = true;
+    };
+    $slides.ontouchmove = e => {
+      $log.innerText+='$slides.ontouchmove\n';
       userScroll = true;
     };
     //this.slides.addEventListener("scroll", e => {}, {passive: true});
