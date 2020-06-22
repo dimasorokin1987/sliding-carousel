@@ -1,0 +1,68 @@
+.sliding-carousel {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 200px;
+}
+
+.sliding-carousel .prevButton {
+  position: absolute;
+  top: 46%;
+  transform: translate(0, -50%);
+  height: 92%;
+  z-index: 1;
+  opacity: 50%;
+  font-size: 36px;
+  /*border-radius: 40%;
+    padding: 10px 15px; */
+}
+
+.sliding-carousel .slides {
+  position: absolute;
+  white-space: nowrap;
+  overflow-x: scroll;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 17px;
+  font-size: 0;
+}
+
+.sliding-carousel .slides figure {
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  height: 92%;
+}
+
+.sliding-carousel .slides figure img {
+  width: 100%;
+  height: 100%;
+}
+
+.sliding-carousel figure figcaption {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+}
+
+.sliding-carousel .nextButton {
+  position: absolute;
+  right: 0;
+  top: 46%;
+  transform: translate(0, -50%);
+  height: 92%;
+  z-index: 1;
+  opacity: 50%;
+  font-size: 36px;
+}
+
+.sliding-carousel .radios {
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
+  width: 100%;
+  text-align: center;
+}ß
