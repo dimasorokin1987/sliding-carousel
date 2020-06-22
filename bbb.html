@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <title>Sliding carousel usage example</title>
+  <style>
+    .container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 200px;
+    }
+
+    .prevButton {
+      position: absolute;
+      z-index: 1;
+      opacity: 50%;
+      font-size: 36px;
+      height: 93%;
+    }
+
+    .slides {
+      position: absolute;
+      white-space: nowrap;
+      overflow-x: scroll;
+      width: 100%;
+      height: 100%;
+      padding-bottom: 17px;
+      font-size: 0;
+    }
+
+    .slides figure {
+      position: relative;
+      display: inline-block;
+      padding: 0;
+      margin: 0;
+      width: 33.33333333%;
+      height: 93%;
+    }
+
+    .slides figure img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .slides figure figcaption {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 32px;
+    }
+
+    .nextButton {
+      position: absolute;
+      right: 0;
+      z-index: 1;
+      opacity: 50%;
+      font-size: 36px;
+      height: 93%;
+    }
+
+    .radios {
+      position: absolute;
+      bottom: 0;
+      z-index: 1;
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <button class='prevButton'>&lt;</button>
+    <div class='slides'>
+      <figure>
+        <img src="https://picsum.photos/200/300" />
+        <figcaption>image 1</figcaption>
+      </figure>
+      <figure>
+        <img src="https://picsum.photos/200/300" />
+        <figcaption>image 2</figcaption>
+      </figure>
+      <figure>
+        <img src="https://picsum.photos/200/300" />
+        <figcaption>image 3</figcaption>
+      </figure>
+      <figure>
+        <img src="https://picsum.photos/200/300" />
+        <figcaption>image 4</figcaption>
+      </figure>
+      <figure>
+        <img src="https://picsum.photos/200/300" />
+        <figcaption>image 5</figcaption>
+      </figure>
+    </div>
+    <button class='nextButton'>&gt;</button>
+    <div class='radios'></div>
+  </div>
+  <button class='clearLogButton'>clear log</button>
+  <div class='log'></div>
+  <script>
+    let $prevButton = document.querySelector('.prevButton');
+    let $nextButton = document.querySelector('.nextButton');
+    let $slides = document.querySelector('.slides');
+    let $radios = document.querySelector('.radios');
+    let $log = document.querySelector('.log');
+    let $clearLogButton = document.querySelector('.clearLogButton');
+
+
+    let smoothScroll = true;
+    let loopSlides = true;
+    let nDisplaySlides = 3;
+    let n = $slides.children.length;
+
+    $log.innerText+=`params: smoothScroll: ${smoothScroll}, loopSlides: ${loopSlides}, nDisplaySlides: ${nDisplaySlides}\n`;
+
+    let userScroll = false;
+    let hasPrev = false;
+    let hasNextPosition = false;
+    let positions = [];
+    let index = 0;
+    let shift = 0;
+
+    let prevX;
+    let prevTime;
+    let vx;
+    let prevUserScrollTime;
+    let interval;
+
+    // const correctBoundNextIndex = (toIndex)=>{
+    //   let n = $slides.children.length;
+    //   let m = n - nDisplaySlides + 1;
+    //   console.log(index,toIndex,n-1,index===n-1 && toIndex===0)
+    //   if(index===0 && toIndex===n-1){
+    //     if(loopSlides){
+    //       $slides.scrollTo(positions[1],0)
+    //       $slides.insertBefore($slides.children[n-1], $slides.children[0]); 
+    //       shift = (shift+1)%n;
+    //       toIndex = 0;
+    //     }
+    //   }
+    //   if(true
+    //     && n-nDisplaySlides<=index && index<n
+    //     && toIndex===(index+1)%n
+    //   ){
+    //     //2->3,3->0
+    //     console.log(111)
+    //     if(loopSlides){
+    //       $slides.appendChild($slides.children[0]);
+    //       $slides.scrollTo(positions[m-2],0)  
+    //       shift = (shift+n-1)%n;
+    //       toIndex = m-1;
+    //     }
+    //   }
+    //   return toIndex;
+    // };
+
+    const scrollToIndex = (toIndex)=>{
+    //  toIndex = correctBoundNextIndex(toIndex);
+
+      $slides.scrollTo(positions[toIndex],0);
+      index = toIndex;
+      $radios.children[origIndex()].checked=true;
+    };
+
+    const smoothScrollToIndex = (toIndex)=>{
+     // toIndex = correctBoundNextIndex(toIndex);
+
+      $slides.children[toIndex].scrollIntoView({
+        behavior: 'smooth', block: 'nearest', inline: 'start'
+      });
+      index = toIndex;
+      $radios.children[origIndex()].checked=true;
+    };
+
+    const prevIndex = ()=>{
+      if(loopSlides) return (index + positions.length - 1)%positions.length;
+      else return Math.max(index - 1, 0);
+    };
+
+    const nextIndex = ()=>{
+      if(loopSlides) return (index + 1)%positions.length;
+      else return Math.min(index + 1, positions.length - 1);
+    };
+
+    const origIndex = ()=>{
+      //0,1,2=>2,3,4
+      if(index<nDisplaySlides)return n-nDisplaySlides+index;
+      //3,4,5,6,7=>0,1,2,3,4
+      else if(index<n+nDisplaySlides) return index-nDisplaySlides;
+      //8,9,10=>0,1,2
+      else if(index<n+nDisplaySlides*2) return index-n-nDisplaySlides;
+    }
+
+
+    const updateIndexFromPosition = () => {
+      let currentPosition = $slides.scrollLeft;
+      let nearestIndex = 0;
+      let minDistance = Infinity;
+      positions.forEach((pos,i)=>{
+        let dist = Math.abs(pos-currentPosition);
+        if(dist<minDistance){
+          minDistance = dist;
+          nearestIndex = i;
+        }
+        //console.log(currentPosition,pos,dist,i)
+      });
+      index = nearestIndex;
+      $radios.children[origIndex()].checked=true;
+    };
+
+
+    
+
+    let preSlides = [];
+    let postSlides = [];
+    for(let i=0; i<nDisplaySlides; i++){
+      postSlides[i] = $slides.children[i].cloneNode(true);
+      preSlides[i] = $slides.children[n-1-i].cloneNode(true);
+    }
+
+    for(let i=0; i<nDisplaySlides; i++){
+      $slides.insertBefore(preSlides[i], $slides.firstElementChild);
+      $slides.appendChild(postSlides[i]);
+    }
+      
+    // let firstNodeClone = $slides.firstElementChild.cloneNode(true);
+    // let lastNodeClone = $slides.lastElementChild.cloneNode(true);
+
+    // $slides.insertBefore(lastNodeClone, $slides.firstElementChild);
+    // $slides.appendChild(firstNodeClone);
+
+
+
+    Array.from($slides.children).forEach(slide=>{
+      positions.push(slide.offsetLeft);
+    });
+
+    if(nDisplaySlides>1){
+      if(!loopSlides){
+        let n = positions.length;
+        positions.splice(n-nDisplaySlides+1);
+      }
+    }
+
+
+
+    $radios.innerHTML = '';
+
+    for(let i=0;i<n;i++){
+      let radio = document.createElement("input");
+      radio.type='radio';
+      radio.name='position';
+      $radios.appendChild(radio);
+    };
+
+    Array.from($radios.children).forEach((radio,i)=>{
+      console.log('radio',i)
+      radio.onclick = ()=>{
+        console.log('radio handler',i)
+        let n = $slides.children.length;
+        let j = (i+shift+n)%n;
+        if(smoothScroll) smoothScrollToIndex(j);
+        else scrollToIndex(j);
+      };
+    });
+
+    if($radios.children[origIndex()]){
+      $radios.children[origIndex()].checked=true;
+    }
+
+
+    $prevButton.onclick = () => {
+      if (smoothScroll) smoothScrollToIndex(prevIndex());
+      else scrollToIndex(prevIndex());
+    };
+    $nextButton.onclick = () => {
+      if (smoothScroll) smoothScrollToIndex(nextIndex());
+      else scrollToIndex(nextIndex());
+    };
+    $slides.onmousewheel = e => {
+      $log.innerText+='$slides.onmousewheel\n';
+      userScroll = true;
+    };
+    $slides.ontouchmove = e => {
+      $log.innerText+='$slides.ontouchmove\n';
+      userScroll = true;
+    };
+    //this.slides.addEventListener("scroll", e => {}, {passive: true});
+    $slides.onscroll = e => {try{
+      $log.innerText+='onscroll\n';
+      if (!userScroll) return;
+      userScroll = false;
+      $log.innerText+='user onscroll\n';
+      //console.log('user scroll',e);
+
+      if (smoothScroll) {
+        let currentPosition = $slides.scrollLeft;
+        let currentTime = Date.now();
+        // console.log('currentPosition',currentPosition);
+        // console.log('currentTime',currentTime);
+
+        if (hasPrev && !hasNextPosition) {
+          let dx = currentPosition - prevX;
+          let dt = currentTime - prevTime;
+          vx = dx / dt;
+          hasNextPosition = true;
+        }
+
+        prevX = currentPosition;
+        prevTime = currentTime;
+        hasPrev = true;
+      } else {
+        let currentScrollTime = Date.now();
+        let isScrollingTimeout = prevUserScrollTime && currentScrollTime < prevUserScrollTime + 100;
+        prevUserScrollTime = currentScrollTime;
+        if (isScrollingTimeout) {
+          $slides.scrollLeft = positions[index];
+        } else {
+          let currentPosition = $slides.scrollLeft;
+          let prevPosition = positions[index];
+          if (currentPosition < prevPosition) scrollToIndex(prevIndex());
+          else if (currentPosition > prevPosition) scrollToIndex(nextIndex());
+        }
+      }
+    }catch(e){
+      $log.innerText+='onscroll: '+e+'\n';
+    }};
+
+    clearInterval(interval);
+    interval = setInterval(() => {try{
+      if (hasNextPosition) {
+        updateIndexFromPosition();
+        let currentPosition = $slides.scrollLeft;
+        let indexRight = positions.findIndex(x => x > currentPosition);
+        if (indexRight === -1) indexRight = positions.length - 1;
+
+        let indexLeft = indexRight - 1;
+        let indexNext = vx < 0 ? indexLeft : vx > 0 ? indexRight : index;
+        let nextPosition = positions[indexNext];
+        let d = nextPosition - currentPosition;
+        //console.log('inter', indexRight, currentPosition, positions)
+        let ax = Math.abs(1 / d * 100 * 10);
+        ax = Math.min(ax, 0.02);
+        // console.log(ax);
+        vx += Math.sign(d) * ax;
+        vx = Math.min(vx, 0.15);
+        //console.log(vx);
+
+        if (Math.abs(d) > 100) $slides.scrollLeft += vx * 100;
+        else if (Math.abs(d) > 5) $slides.scrollLeft += 0.3 * d;
+        else {
+          $slides.scrollLeft = nextPosition;
+          hasPrev = false;
+          hasNextPosition = false;
+        }
+
+        //0,1,2| 3,4,5,6,7| 8,9,10
+        //2,3,4| 0,1,2,3,4| 0,1,2
+        let deltaOverFirst = currentPosition - positions[nDisplaySlides];
+        let deltaOverLast = currentPosition - positions[nDisplaySlides-1+n];
+        console.log(deltaOverLast,vx > 0,deltaOverFirst,vx < 0)
+        if(deltaOverFirst < 0 && vx < 0){
+          $slides.scrollLeft = positions[nDisplaySlides+n] + deltaOverFirst;
+        }
+        if(deltaOverLast > 0 && vx > 0){
+          $slides.scrollLeft = positions[nDisplaySlides-1] + deltaOverLast;
+        }
+      }
+    }catch(e){
+      $log.innerText+='interval: '+e+'\n';
+    }}, 100);
+
+
+    $clearLogButton.onclick=()=>{
+      $log.innerText='';
+    };
+  </script>
+</body>
+
+</html>
