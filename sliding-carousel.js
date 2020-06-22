@@ -173,6 +173,9 @@ class SlidingCarousel extends HTMLElement {
     this.slides.onmousewheel = e => { 
       this.userScroll = true; 
     };
+    this.slides.ontouchmove = e => {
+      this.userScroll = true;
+    };
     //this.slides.addEventListener("scroll", e => {}, {passive: true});
     this.slides.onscroll = e => {
       if(!this.userScroll) return;
