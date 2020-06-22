@@ -98,15 +98,15 @@
       </figure>
     </div>
     <button class='nextButton'>&gt;</button>
-    <div class='radios'>
-
-    </div>
+    <div class='radios'></div>
   </div>
+  <div class='log'></div>
   <script>
     let $prevButton = document.querySelector('.prevButton');
     let $nextButton = document.querySelector('.nextButton');
     let $slides = document.querySelector('.slides');
     let $radios = document.querySelector('.radios');
+    let $log = document.querySelector('.log');
 
 
     let smoothScroll = true;
@@ -258,7 +258,7 @@
       userScroll = true;
     };
     //this.slides.addEventListener("scroll", e => {}, {passive: true});
-    $slides.onscroll = e => {
+    $slides.onscroll = e => {try{
       if (!userScroll) return;
       userScroll = false;
       //console.log('user scroll',e);
@@ -292,9 +292,12 @@
           else if (currentPosition > prevPosition) scrollToIndex(nextIndex());
         }
       }
-    }
+    }catch(e){
+      $log.innerText+='onscroll: '+e+'\n';
+    }};
+
     clearInterval(interval);
-    interval = setInterval(() => {
+    interval = setInterval(() => {try{
       if (hasNextPosition) {
         updateIndexFromPosition();
         let currentPosition = $slides.scrollLeft;
@@ -321,7 +324,9 @@
           hasNextPosition = false;
         }
       }
-    }, 100);
+    }catch(e){
+      $log.innerText+='interval: '+e+'\n';
+    }}, 100);
 
   </script>
 </body>
