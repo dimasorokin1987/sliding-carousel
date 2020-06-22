@@ -19,6 +19,10 @@
       opacity: 50%;
       font-size: 36px;
       height: 93%;
+      /* top: 50%;
+      transform: translate(0, -50%);
+      border-radius: 40%;
+      padding: 10px 15px; */
     }
 
     .slides {
@@ -267,7 +271,7 @@
       radio.onclick = ()=>{
         console.log('radio handler',i)
         let n = $slides.children.length;
-        let j = (i+shift+n)%n;
+        let j = nDisplaySlides+i;
         if(smoothScroll) smoothScrollToIndex(j);
         else scrollToIndex(j);
       };
