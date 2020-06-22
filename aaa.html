@@ -113,6 +113,8 @@
     let loopSlides = true;
     let nDisplaySlides = 3;
 
+    $log.innerText+=`params: smoothScroll: ${smoothScroll}, loopSlides: ${loopSlides}, nDisplaySlides: ${nDisplaySlides}\n`;
+
     let userScroll = false;
     let hasPrev = false;
     let hasNextPosition = false;
@@ -259,8 +261,10 @@
     };
     //this.slides.addEventListener("scroll", e => {}, {passive: true});
     $slides.onscroll = e => {try{
+      $log.innerText+='onscroll\n';
       if (!userScroll) return;
       userScroll = false;
+      $log.innerText+='user onscroll\n';
       //console.log('user scroll',e);
 
       if (smoothScroll) {
