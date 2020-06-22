@@ -104,8 +104,12 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
     };
   });
 
+  console.log('aaaa',origIndex(),$radios.children[origIndex()])
   if ($radios.children[origIndex()]) {
+    console.log($radios.children[origIndex()].checked)
     $radios.children[origIndex()].checked = true;
+    console.log($radios.children[origIndex()].checked)
+    window.aaa=$radios.children[origIndex()]
   }
 
   //append handlers

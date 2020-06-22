@@ -5,72 +5,76 @@
   <meta charset='utf-8' />
   <meta name='viewport' content='width=device-width, initial-scale=1' />
   <title>Sliding carousel usage example</title>
-  <link rel="stylesheet" type="text/css" href="https://dimasorokin1987.github.io/sliding-carousel/sliding-carousel.css">
+  <link rel="stylesheet" type="text/css" href="./sliding-carousel.css">
   <script src='https://dimasorokin1987.github.io/sliding-carousel/sliding-carousel.js'></script>
 </head>
 
 <body>
-  <h2>looped sliging carousel via css and js module</h2>
+  <h2>looped sliding carousel via css and js module</h2>
   <div class='sliding-carousel' id='container1'>
-    <button class='prevButton'>&lt;</button>
-    <div class='slides'>
-      <figure>
-        <img src='https://picsum.photos/200/300?1' />
-        <figcaption>image 1</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?2' />
-        <figcaption>image 2</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?3' />
-        <figcaption>image 3</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?4' />
-        <figcaption>image 4</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?5' />
-        <figcaption>image 5</figcaption>
-      </figure>
+    <div class='main-container'>
+      <button class='prevButton'>&lt;</button>
+      <div class='slides'>
+        <figure>
+          <img src='https://picsum.photos/200/300?1' />
+          <figcaption>image 1</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?2' />
+          <figcaption>image 2</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?3' />
+          <figcaption>image 3</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?4' />
+          <figcaption>image 4</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?5' />
+          <figcaption>image 5</figcaption>
+        </figure>
+      </div>
+      <button class='nextButton'>&gt;</button>
     </div>
-    <button class='nextButton'>&gt;</button>
     <div class='radios'></div>
   </div>
   <div class='sliding-carousel' id='container2'>
-    <button class='prevButton'>&lt;</button>
-    <div class='slides'>
-      <figure>
-        <img src='https://picsum.photos/200/300?1' />
-        <figcaption>image 1</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?2' />
-        <figcaption>image 2</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?3' />
-        <figcaption>image 3</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?4' />
-        <figcaption>image 4</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?5' />
-      </figure>
+    <div class='main-container'>
+      <button class='prevButton'>&lt;</button>
+      <div class='slides'>
+        <figure>
+          <img src='https://picsum.photos/200/300?1' />
+          <figcaption>image 1</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?2' />
+          <figcaption>image 2</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?3' />
+          <figcaption>image 3</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?4' />
+          <figcaption>image 4</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?5' />
+        </figure>
+      </div>
+      <button class='nextButton'>&gt;</button>
     </div>
-    <button class='nextButton'>&gt;</button>
     <div class='radios'></div>
   </div>
   <script type='module'>
-    import { applyLoopedSlidingCarousel } from 'https://dimasorokin1987.github.io/sliding-carousel/looped-sliding-carousel.mjs';
+    import { applyLoopedSlidingCarousel } from './looped-sliding-carousel.mjs';
     applyLoopedSlidingCarousel('#container1.sliding-carousel');
     applyLoopedSlidingCarousel('#container2.sliding-carousel', 3);
   </script>
 
-  <h2>sliging carousel via custom elements</h2>
+  <h2>sliding carousel via custom elements</h2>
   <sliding-carousel width='700px' height='300px' n_display_slides=3 smooth_scroll loop_slides>
     <figure>
       <img src="https://picsum.photos/200/300" />
