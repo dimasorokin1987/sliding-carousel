@@ -111,10 +111,13 @@
     let $clearLogButton = document.querySelector('.clearLogButton');
 
 
+    const vxMax = 0.3;
+
     let smoothScroll = true;
     let loopSlides = true;
     let nDisplaySlides = 3;
     let n = $slides.children.length;
+    
 
     $log.innerText+=`params: smoothScroll: ${smoothScroll}, loopSlides: ${loopSlides}, nDisplaySlides: ${nDisplaySlides}\n`;
 
@@ -240,14 +243,15 @@
       positions.push(slide.offsetLeft);
     });
 
-    if(nDisplaySlides>1){
-      if(!loopSlides){
-        let n = positions.length;
-        positions.splice(n-nDisplaySlides+1);
-      }
-    }
+    // if(nDisplaySlides>1){
+    //   if(!loopSlides){
+    //     let n = positions.length;
+    //     positions.splice(n-nDisplaySlides+1);
+    //   }
+    // }
 
-
+    index = nDisplaySlides;
+    $slides.scrollLeft = positions[index];
 
     $radios.innerHTML = '';
 
@@ -275,12 +279,17 @@
 
 
     $prevButton.onclick = () => {
-      if (smoothScroll) smoothScrollToIndex(prevIndex());
-      else scrollToIndex(prevIndex());
+      $slides.scrollLeft-=0.001;
+      vx = -vxMax;
+      hasNextPosition = true;
+      // if (smoothScroll) smoothScrollToIndex(prevIndex());
+      // else scrollToIndex(prevIndex());
     };
     $nextButton.onclick = () => {
-      if (smoothScroll) smoothScrollToIndex(nextIndex());
-      else scrollToIndex(nextIndex());
+      vx = vxMax;
+      hasNextPosition = true;
+      // if (smoothScroll) smoothScrollToIndex(nextIndex());
+      // else scrollToIndex(nextIndex());
     };
     $slides.onmousewheel = e => {
       $log.innerText+='$slides.onmousewheel\n';
@@ -348,13 +357,14 @@
         ax = Math.min(ax, 0.02);
         // console.log(ax);
         vx += Math.sign(d) * ax;
-        vx = Math.min(vx, 0.15);
-        //console.log(vx);
+        vx = Math.min(vx, vxMax);
+        console.log(vx,d);
 
         if (Math.abs(d) > 100) $slides.scrollLeft += vx * 100;
         else if (Math.abs(d) > 5) $slides.scrollLeft += 0.3 * d;
         else {
           $slides.scrollLeft = nextPosition;
+          vx = 0;
           hasPrev = false;
           hasNextPosition = false;
         }
