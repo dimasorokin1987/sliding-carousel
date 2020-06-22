@@ -100,6 +100,7 @@
     <button class='nextButton'>&gt;</button>
     <div class='radios'></div>
   </div>
+  <button class='clearLogButton'>clear log</button>
   <div class='log'></div>
   <script>
     let $prevButton = document.querySelector('.prevButton');
@@ -107,6 +108,7 @@
     let $slides = document.querySelector('.slides');
     let $radios = document.querySelector('.radios');
     let $log = document.querySelector('.log');
+    let $clearLogButton = document.querySelector('.clearLogButton');
 
 
     let smoothScroll = true;
@@ -332,6 +334,10 @@
       $log.innerText+='interval: '+e+'\n';
     }}, 100);
 
+
+    $clearLogButton.onclick=()=>{
+      $log.innerText='';
+    };
   </script>
 </body>
 
