@@ -16,7 +16,6 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   let userScroll = false;
   let hasPrev = false;
   let hasNextPosition = false;
-  let positions = [];
   let index = 0;
   let shift = 0;
 
@@ -24,6 +23,16 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   let prevTime;
   let vx;
   let interval;
+
+  const positions = i => {
+   if(typeof i === 'undefined'){
+     return Array
+     .from($slides.children)
+     .map(el=>el.offsetLeft);
+    }else{
+     return $slides.children[i].offsetLeft;
+    }
+  };
 
 
   const smoothScrollToIndex = (toIndex) => {
@@ -35,11 +44,11 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   };
 
   const prevIndex = () => {
-    return (index + positions.length - 1) % positions.length;
+    return (index + n - 1) % n;
   };
 
   const nextIndex = () => {
-    return (index + 1) % positions.length;
+    return (index + 1) % n;
   };
 
   const origIndex = () => {
@@ -56,7 +65,7 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
     let currentPosition = $slides.scrollLeft;
     let nearestIndex = 0;
     let minDistance = Infinity;
-    positions.forEach((pos, i) => {
+    positions().forEach((pos, i) => {
       let dist = Math.abs(pos - currentPosition);
       if (dist < minDistance) {
         minDistance = dist;
@@ -83,11 +92,10 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
 
   Array.from($slides.children).forEach(slide => {
     slide.style.width = `${100 / nDisplaySlides}%`;
-    positions.push(slide.offsetLeft);
   });
 
   index = nDisplaySlides;
-  $slides.scrollLeft = positions[index];
+  $slides.scrollLeft = positions(index);
 
   //create radios
   $radios.innerHTML = '';
@@ -157,12 +165,12 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
     if (hasNextPosition) {
       updateIndexFromPosition();
       let currentPosition = $slides.scrollLeft;
-      let indexRight = positions.findIndex(x => x > currentPosition);
-      if (indexRight === -1) indexRight = positions.length - 1;
+      let indexRight = positions().findIndex(x => x > currentPosition);
+      if (indexRight === -1) indexRight = n - 1;
 
       let indexLeft = indexRight - 1;
       let indexNext = vx < 0 ? indexLeft : vx > 0 ? indexRight : index;
-      let nextPosition = positions[indexNext];
+      let nextPosition = positions(indexNext);
       let d = nextPosition - currentPosition;
       let ax = Math.abs(1 / d * dtStep * 10);
       ax = Math.min(ax, axMax);
@@ -180,13 +188,13 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
 
       //0,1,2| 3,4,5,6,7| 8,9,10
       //2,3,4| 0,1,2,3,4| 0,1,2
-      let deltaOverFirst = currentPosition - positions[nDisplaySlides];
-      let deltaOverLast = currentPosition - positions[nDisplaySlides - 1 + n];
+      let deltaOverFirst = currentPosition - positions(nDisplaySlides);
+      let deltaOverLast = currentPosition - positions(nDisplaySlides - 1 + n);
       if (deltaOverFirst < 0 && vx < 0) {
-        $slides.scrollLeft = positions[nDisplaySlides + n] + deltaOverFirst;
+        $slides.scrollLeft = positions(nDisplaySlides + n) + deltaOverFirst;
       }
       if (deltaOverLast > 0 && vx > 0) {
-        $slides.scrollLeft = positions[nDisplaySlides - 1] + deltaOverLast;
+        $slides.scrollLeft = positions(nDisplaySlides - 1) + deltaOverLast;
       }
     }
   }, dtStep);
