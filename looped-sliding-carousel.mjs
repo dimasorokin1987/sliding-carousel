@@ -29,6 +29,10 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
     return $slides.children[i].offsetLeft;
   };
 
+  const positions = () => Array
+   .from($slides.children)
+   .map(el=>el.offsetLeft);
+
 
   const smoothScrollToIndex = (toIndex) => {
     $slides.children[toIndex].scrollIntoView({
@@ -39,11 +43,11 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   };
 
   const prevIndex = () => {
-    return (index + positions.length - 1) % positions.length;
+    return (index + n - 1) % n;
   };
 
   const nextIndex = () => {
-    return (index + 1) % positions.length;
+    return (index + 1) % n;
   };
 
   const origIndex = () => {
