@@ -156,8 +156,8 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   };
 
 
-  addEventListener('resize', element, e=>document.body.innerText+='resize'+e);
-  addEventListener('orientationchange', element, ()=>document.body.innerText+='orientationchange'+screen.orientation.angle);
+  addEventListener('resize', e=>document.body.appendChild(document.createTextNode('r...')));
+  addEventListener('orientationchange', e=>document.body.appendChild(document.createTextNode('o...')));
 
 
   clearInterval(interval);
