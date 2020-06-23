@@ -98,3 +98,4 @@ document.querySelector('sliding-carousel').setAttribute('loop_slides','true');
     applyLoopedSlidingCarousel('#container2.sliding-carousel', 3);
   </script>
 ```
+[link to full example](http://dimasorokin1987.github.io/sliding-carousel/)
