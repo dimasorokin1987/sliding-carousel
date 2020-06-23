@@ -16,7 +16,6 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   let userScroll = false;
   let hasPrev = false;
   let hasNextPosition = false;
-  let positions = [];
   let index = 0;
   let shift = 0;
 
@@ -33,7 +32,7 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
     }else{
      return $slides.children[i].offsetLeft;
     }
-  }
+  };
 
 
   const smoothScrollToIndex = (toIndex) => {
