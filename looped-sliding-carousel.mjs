@@ -17,7 +17,6 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   let hasPrev = false;
   let hasNextPosition = false;
   let index = 0;
-  let shift = 0;
 
   let prevX;
   let prevTime;
@@ -156,9 +155,17 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   };
 
 
-  addEventListener('resize', e=>document.body.appendChild(document.createTextNode('r...')));
-  addEventListener('orientationchange', e=>document.body.appendChild(document.createTextNode('o...')));
+  //addEventListener('resize', e=>document.body.appendChild(document.createTextNode('r...')));
+  //addEventListener('orientationchange', e=>document.body.appendChild(document.createTextNode('o...')));
 
+  addEventListener('resize', ()=>{
+    $slides.scrollLeft = positions(index);
+    //$slides.scrollLeft = $slides.scrollWidth * relPosition;
+  });
+  addEventListener('orientationchange', ()=>{
+    $slides.scrollLeft = positions(index);
+    //$slides.scrollLeft = $slides.scrollWidth * relPosition;
+  });
 
   clearInterval(interval);
   interval = setInterval(() => {
