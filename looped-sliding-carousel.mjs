@@ -25,6 +25,10 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   let vx;
   let interval;
 
+  const getPositionByIndex = i => {
+    return $slides.children[i].offsetLeft;
+  };
+
 
   const smoothScrollToIndex = (toIndex) => {
     $slides.children[toIndex].scrollIntoView({
