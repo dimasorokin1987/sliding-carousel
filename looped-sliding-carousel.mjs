@@ -1,10 +1,12 @@
 export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   if (typeof element === 'string') element = document.querySelector(element);
 
-  let $prevButton = element.querySelector('.prevButton');
-  let $nextButton = element.querySelector('.nextButton');
-  let $slides = element.querySelector('.slides');
-  let $radios = element.querySelector('.radios');
+  const id = Date.now();
+
+  const $prevButton = element.querySelector('.prevButton');
+  const $nextButton = element.querySelector('.nextButton');
+  const $slides = element.querySelector('.slides');
+  const $radios = element.querySelector('.radios');
 
   const axMax = 0.01;
   const vxMax = 0.3;
@@ -102,7 +104,7 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   for (let i = 0; i < n; i++) {
     let radio = document.createElement("input");
     radio.type = 'radio';
-    radio.name = 'position';
+    radio.name = 'position'+id;
     $radios.appendChild(radio);
   };
 
