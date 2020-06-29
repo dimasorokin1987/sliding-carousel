@@ -39,59 +39,63 @@ document.querySelector('sliding-carousel').setAttribute('loop_slides','true');
 <link rel="stylesheet" type="text/css" href="https://dimasorokin1987.github.io/sliding-carousel/sliding-carousel.css">
 ...
 <div class='sliding-carousel' id='container1'>
-    <button class='prevButton'>&lt;</button>
-    <div class='slides'>
-      <figure>
-        <img src='https://picsum.photos/200/300?1' />
-        <figcaption>image 1</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?2' />
-        <figcaption>image 2</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?3' />
-        <figcaption>image 3</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?4' />
-        <figcaption>image 4</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?5' />
-        <figcaption>image 5</figcaption>
-      </figure>
-    </div>
-    <button class='nextButton'>&gt;</button>
+    <div class='main-container'>
+      <button class='prevButton'>&lt;</button>
+      <div class='slides'>
+        <figure>
+          <img src='https://picsum.photos/200/300?1' />
+          <figcaption>image 1</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?2' />
+          <figcaption>image 2</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?3' />
+          <figcaption>image 3</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?4' />
+          <figcaption>image 4</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?5' />
+          <figcaption>image 5</figcaption>
+        </figure>
+      </div>
+      <button class='nextButton'>&gt;</button>
+    </div> 
     <div class='radios'></div>
   </div>
   <div class='sliding-carousel' id='container2'>
-    <button class='prevButton'>&lt;</button>
-    <div class='slides'>
-      <figure>
-        <img src='https://picsum.photos/200/300?1' />
-        <figcaption>image 1</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?2' />
-        <figcaption>image 2</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?3' />
-        <figcaption>image 3</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?4' />
-        <figcaption>image 4</figcaption>
-      </figure>
-      <figure>
-        <img src='https://picsum.photos/200/300?5' />
-      </figure>
+    <div class='main-container'>
+      <button class='prevButton'>&lt;</button>
+      <div class='slides'>
+        <figure>
+          <img src='https://picsum.photos/200/300?1' />
+          <figcaption>image 1</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?2' />
+          <figcaption>image 2</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?3' />
+          <figcaption>image 3</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?4' />
+          <figcaption>image 4</figcaption>
+        </figure>
+        <figure>
+          <img src='https://picsum.photos/200/300?5' />
+        </figure>
+      </div>
+      <button class='nextButton'>&gt;</button>
     </div>
-    <button class='nextButton'>&gt;</button>
     <div class='radios'></div>
   </div>
-
+  ...
   <script type='module'>
     import {applyLoopedSlidingCarousel} from 'https://dimasorokin1987.github.io/sliding-carousel/looped-sliding-carousel.mjs';
     applyLoopedSlidingCarousel('#container1.sliding-carousel');

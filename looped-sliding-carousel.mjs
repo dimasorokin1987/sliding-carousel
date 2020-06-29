@@ -22,14 +22,15 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   let prevTime;
   let vx;
   let interval;
+  //let userIteractionTime;
 
   const positions = i => {
-   if(typeof i === 'undefined'){
-     return Array
-     .from($slides.children)
-     .map(el=>el.offsetLeft);
-    }else{
-     return $slides.children[i].offsetLeft;
+    if (typeof i === 'undefined') {
+      return Array
+        .from($slides.children)
+        .map(el => el.offsetLeft);
+    } else {
+      return $slides.children[i].offsetLeft;
     }
   };
 
@@ -111,12 +112,12 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
     };
   });
 
-  console.log('aaaa',origIndex(),$radios.children[origIndex()])
+  console.log('aaaa', origIndex(), $radios.children[origIndex()])
   if ($radios.children[origIndex()]) {
     console.log($radios.children[origIndex()].checked)
     $radios.children[origIndex()].checked = true;
     console.log($radios.children[origIndex()].checked)
-    window.aaa=$radios.children[origIndex()]
+    window.aaa = $radios.children[origIndex()]
   }
 
   //append handlers
@@ -130,10 +131,16 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
     hasNextPosition = true;
   };
   $slides.onmousewheel = e => {
+    //userIteractionTime = Date.now();
     userScroll = true;
+    vx = 0;
+    hasNextPosition = false;
   };
   $slides.ontouchmove = e => {
+    //userIteractionTime = Date.now();
     userScroll = true;
+    vx = 0;
+    hasNextPosition = false;
   };
   $slides.onscroll = e => {
     if (!userScroll) return;
@@ -158,51 +165,56 @@ export const applyLoopedSlidingCarousel = (element, nDisplaySlides = 1) => {
   //addEventListener('resize', e=>document.body.appendChild(document.createTextNode('r...')));
   //addEventListener('orientationchange', e=>document.body.appendChild(document.createTextNode('o...')));
 
-  addEventListener('resize', ()=>{
+  addEventListener('resize', () => {
     $slides.scrollLeft = positions(index);
     //$slides.scrollLeft = $slides.scrollWidth * relPosition;
   });
-  addEventListener('orientationchange', ()=>{
+  addEventListener('orientationchange', () => {
     $slides.scrollLeft = positions(index);
     //$slides.scrollLeft = $slides.scrollWidth * relPosition;
   });
 
   clearInterval(interval);
   interval = setInterval(() => {
-    if (hasNextPosition) {
-      updateIndexFromPosition();
-      let currentPosition = $slides.scrollLeft;
-      let indexRight = positions().findIndex(x => x > currentPosition);
-      if (indexRight === -1) indexRight = n - 1;
+    //let currentTime = Date.now();
+    //if (currentTime < userIteractionTime + 100) return;
 
-      let indexLeft = indexRight - 1;
-      let indexNext = vx < 0 ? indexLeft : vx > 0 ? indexRight : index;
-      let nextPosition = positions(indexNext);
-      let d = nextPosition - currentPosition;
-      let ax = Math.abs(1 / d * dtStep * 10);
-      ax = Math.min(ax, axMax);
-      vx += Math.sign(d) * ax;
-      vx = Math.min(vx, vxMax);
+    if (userScroll) return;
+    if (!hasNextPosition) return;
+    console.log('interval')
 
-      if (Math.abs(d) > 50) $slides.scrollLeft += vx * dtStep;
-      else if (Math.abs(d) > 5) $slides.scrollLeft += 0.5 * d;
-      else {
-        $slides.scrollLeft = nextPosition;
-        vx = 0;
-        hasPrev = false;
-        hasNextPosition = false;
-      }
+    updateIndexFromPosition();
+    let currentPosition = $slides.scrollLeft;
+    let indexRight = positions().findIndex(x => x > currentPosition);
+    if (indexRight === -1) indexRight = n - 1;
 
-      //0,1,2| 3,4,5,6,7| 8,9,10
-      //2,3,4| 0,1,2,3,4| 0,1,2
-      let deltaOverFirst = currentPosition - positions(nDisplaySlides);
-      let deltaOverLast = currentPosition - positions(nDisplaySlides - 1 + n);
-      if (deltaOverFirst < 0 && vx < 0) {
-        $slides.scrollLeft = positions(nDisplaySlides + n) + deltaOverFirst;
-      }
-      if (deltaOverLast > 0 && vx > 0) {
-        $slides.scrollLeft = positions(nDisplaySlides - 1) + deltaOverLast;
-      }
+    let indexLeft = indexRight - 1;
+    let indexNext = vx < 0 ? indexLeft : vx > 0 ? indexRight : index;
+    let nextPosition = positions(indexNext);
+    let d = nextPosition - currentPosition;
+    let ax = Math.abs(1 / d * dtStep * 10);
+    ax = Math.min(ax, axMax);
+    vx += Math.sign(d) * ax;
+    vx = Math.min(vx, vxMax);
+
+    if (Math.abs(d) > 50) $slides.scrollLeft += vx * dtStep;
+    else if (Math.abs(d) > 5) $slides.scrollLeft += 0.5 * d;
+    else {
+      $slides.scrollLeft = nextPosition;
+      vx = 0;
+      hasPrev = false;
+      hasNextPosition = false;
+    }
+
+    //0,1,2| 3,4,5,6,7| 8,9,10
+    //2,3,4| 0,1,2,3,4| 0,1,2
+    let deltaOverFirst = currentPosition - positions(nDisplaySlides);
+    let deltaOverLast = currentPosition - positions(nDisplaySlides - 1 + n);
+    if (deltaOverFirst < 0 && vx < 0) {
+      $slides.scrollLeft = positions(nDisplaySlides + n) + deltaOverFirst;
+    }
+    if (deltaOverLast > 0 && vx > 0) {
+      $slides.scrollLeft = positions(nDisplaySlides - 1) + deltaOverLast;
     }
   }, dtStep);
 };
