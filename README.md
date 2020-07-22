@@ -1,6 +1,6 @@
 ## sliding carousel custom element usage:
 ```html
-<script src='https://dimasorokin1987.github.io/sliding-carousel/sliding-carousel.js'></script>
+<script src='https://cdn.jsdelivr.net/gh/dimasorokin1987/sliding-carousel@v0.1.0/sliding-carousel.js'></script>
 ...
 <sliding-carousel width='700px' height='300px' n_display_slides=3>
   <figure>
@@ -36,7 +36,7 @@ document.querySelector('sliding-carousel').setAttribute('loop_slides','true');
 ```
 ## looped sliding carousel usage
 ```html
-<link rel="stylesheet" type="text/css" href="https://dimasorokin1987.github.io/sliding-carousel/sliding-carousel.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/dimasorokin1987/sliding-carousel@v0.1.0/sliding-carousel.css">
 ...
 <div class='sliding-carousel' id='container1'>
     <div class='main-container'>
@@ -97,7 +97,7 @@ document.querySelector('sliding-carousel').setAttribute('loop_slides','true');
   </div>
   ...
   <script type='module'>
-    import {applyLoopedSlidingCarousel} from 'https://dimasorokin1987.github.io/sliding-carousel/looped-sliding-carousel.mjs';
+    import {applyLoopedSlidingCarousel} from 'https://cdn.jsdelivr.net/gh/dimasorokin1987/sliding-carousel@v0.1.0/looped-sliding-carousel.mjs';
     applyLoopedSlidingCarousel('#container1.sliding-carousel');
     applyLoopedSlidingCarousel('#container2.sliding-carousel', 3);
   </script>
